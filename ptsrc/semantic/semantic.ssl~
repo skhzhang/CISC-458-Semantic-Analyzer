@@ -313,7 +313,7 @@ mechanism SymbolTable :
 	% the scope being exited, except for formal parameters
 	% which must be retained for type checking.
 
-    oSymbolTblLookupExternal >> Boolean;
+    oSymbolTblLookupExternal >> Boolean
 	% Return true if any external names (program parameters)
 	% have not yet been declared.
 
@@ -322,7 +322,7 @@ mechanism SymbolTable :
 	% symbol table reference for each symbol's identifier index 
 	% to the one at the next lower lexical level
 
-    oSymbolTblMergeScope % new semantic operation
+    oSymbolTblMergeScope; % new semantic operation
 	% Merge the top two scopes in the symbol table by
 	% decrementing the lexical level but not changing the
 	% symbol table top
