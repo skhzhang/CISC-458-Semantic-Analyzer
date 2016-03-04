@@ -202,7 +202,6 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	sLoopBreakWhen = 51;
 	sLoopEnd = 52;
 	sSubstring = 53;
-	sLength = 54;
 
 	sEndOfFile = 55;
 	lastInputToken = 55;

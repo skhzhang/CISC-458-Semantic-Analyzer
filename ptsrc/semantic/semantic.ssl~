@@ -1541,12 +1541,12 @@ Statement :
 		@BeginStmt
 	    | sIfStmt:
 		@IfStmt
-	    % | sWhileStmt:
-		% @WhileStmt
+	    | sWhileStmt:
+		@WhileStmt
 	    | sCaseStmt:
 		@CaseStmt
-	    % | sRepeatStmt:
-		% @RepeatStmt
+	    | sRepeatStmt:
+		@RepeatStmt
 	    | sNullStmt:
 	];
 
@@ -1757,7 +1757,32 @@ IfStmt :
 	.tIfEnd
 	oFixPopForwardBranch;
 
-% removed while and repeat statement rules
+WhileStmt :
+	.tWhileBegin
+	oFixPushTargetAddress		% top-of-loop branch target
+	@BooleanControlExpression
+	.tWhileTest
+	oFixPushForwardBranch
+	oEmitNullAddress		% exit branch
+	oFixSwap		% top-of-loop target back on top
+	@Statement
+	.tWhileEnd
+	oFixPopTargetAddress
+	oFixPopForwardBranch;
+
+RepeatStmt :
+	.tRepeatBegin
+	oFixPushTargetAddress		% top-of-loop branch target
+	{[
+	    | sRepeatEnd:
+		>
+	    | *:
+		@Statement
+	]}
+	.tRepeatControl
+	@BooleanControlExpression
+	.tRepeatTest
+	oFixPopTargetAddress;
 
 CaseStmt :
 	.tCaseBegin

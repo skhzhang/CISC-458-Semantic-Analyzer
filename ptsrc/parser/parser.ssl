@@ -368,12 +368,12 @@ Statement :
 		@AssignmentOrCallStmt
 	    | 'if':
 		@IfStmt
-	    | 'while':
-		@WhileStmt
+	    % | 'while':
+		% @WhileStmt
 	    | 'switch': % replaced by switch keyword for new JT syntax
 		@CaseStmt
-	    | 'repeat':
-		@RepeatStmt
+	    % | 'repeat':
+		% @RepeatStmt
 	    | 'loop':   % add new loop keyword for JT
 		@LoopStmt
 	    | '{': 
@@ -538,27 +538,7 @@ DefaultStmt:
 	';'
 	.sCaseEnd;
 
-
-WhileStmt :
-	.sWhileStmt
-	@Expression
-	.sExpnEnd
-	'do'
-	@Statement;
-
-RepeatStmt :
-	.sRepeatStmt
-	{
-	    @Statement
-	    [
-		| ';':
-		| 'until':
-		    .sRepeatEnd
-		    >
-	    ]
-	}
-	@Expression
-	.sExpnEnd;
+% removed while and repeat statement rules
 
 LoopStmt : % add new loop statement functionality to JT
 	.sLoopStmt
