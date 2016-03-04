@@ -247,6 +247,10 @@ Scan :
 		]
 	    | '*':
 		.pStar
+	    | '#':
+		.pHash
+	    | '@':
+		.pAt
 	    | '{': % remove alt comment functionality of {
 		.pLeftBrace
 	    | '}':
