@@ -254,9 +254,9 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tIfBegin = 42;
 	tIfEnd = 43;
 	tCaseBegin = 44;
-	tWhileBegin = 45;
-	tRepeatBegin = 46;
-	tRepeatControl = 47;
+	{ tWhileBegin = 45; removed old while T-code } 
+	{ tRepeatBegin = 46; removed old repeat T-code } 
+	{ tRepeatControl = 47; removed old repeat T-code } 
 	tCallBegin = 48;
 	tParmEnd = 49;
 	tProcedureEnd = 50;
@@ -268,7 +268,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tLiteralAddress = 56;
 	firstCompoundOutputToken = 56;
 	tLiteralInteger = 57;
-	tLiteralString = 58; { changed token to new T-code for literal strings } 
+	{ removed redundant tLiteralChar token } 
 	tLiteralBoolean = 59;
 	tLiteralString = 60;
 	tStringDescriptor = 61;
@@ -278,15 +278,22 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tCaseSelect = 65;
 	tCaseMerge = 66;
 	tCaseEnd = 67;
-	tWhileTest = 68;
-	tWhileEnd = 69;
-	tRepeatTest = 70;
+	tCaseElse = 68; { added new case alternative T-code } 
+
+	{ added four new loop operation T-codes }
+	tLoopBegin = 69;
+	tLoopBreakWhen = 70;
+	tLoopTest = 71; 
+	tLoopEnd = 72;
+
+	{ tWhileTest = 68; removed old while T-code } 
+	{ tWhileEnd = 69; removed old while T-code } 
+	{ tRepeatTest = 70; removed old repeat T-code } 
 	tSkipProc = 71;
 	tCallEnd = 72;
 	tLineNumber = 73;
 	tTrap = 74;
 	lastCompoundOutputToken = 74;
-
 	
 	{ added new T-code tokens to handle JT strings } 
 	tConcatenate = 75;

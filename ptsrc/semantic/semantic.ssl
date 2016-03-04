@@ -128,9 +128,9 @@ Output : 	% corresponds to coder.ssl input
 	tIfBegin
 	tIfEnd
 	tCaseBegin
-	tWhileBegin
-	tRepeatBegin
-	tRepeatControl
+	% tWhileBegin removed old while T-code
+	% tRepeatBegin removed old repeat T-code
+	% tRepeatControl removed old repeat T-code
 	tCallBegin
 	tParmEnd
 	tProcedureEnd
@@ -154,9 +154,17 @@ Output : 	% corresponds to coder.ssl input
 	tCaseSelect
 	tCaseMerge
 	tCaseEnd
-	tWhileTest
-	tWhileEnd
-	tRepeatTest
+	tCaseElse % added new case alternative T-code
+
+	% added four new loop operation T-codes
+	tLoopBegin
+	tLoopBreakWhen
+	tLoopTest
+	tLoopEnd
+
+	% tWhileTest removed old while T-code
+	% tWhileEnd removed old while T-code
+	% tRepeatTest removed old repeat T-code 
 	tSkipProc
 	tCallEnd
 	tLineNumber

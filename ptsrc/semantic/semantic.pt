@@ -254,9 +254,9 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tIfBegin = 42;
 	tIfEnd = 43;
 	tCaseBegin = 44;
-	tWhileBegin = 45;
-	tRepeatBegin = 46;
-	tRepeatControl = 47;
+	{ tWhileBegin = 45; removed old while T-code } 
+	{ tRepeatBegin = 46; removed old repeat T-code } 
+	{ tRepeatControl = 47; removed old repeat T-code } 
 	tCallBegin = 48;
 	tParmEnd = 49;
 	tProcedureEnd = 50;
@@ -278,24 +278,31 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tCaseSelect = 65;
 	tCaseMerge = 66;
 	tCaseEnd = 67;
-	tWhileTest = 68;
-	tWhileEnd = 69;
-	tRepeatTest = 70;
-	tSkipProc = 71;
-	tCallEnd = 72;
-	tLineNumber = 73;
-	tTrap = 74;
-	lastCompoundOutputToken = 74;
+	tCaseElse = 68; { added new case alternative T-code } 
 
+	{ added four new loop operation T-codes }
+	tLoopBegin = 69;
+	tLoopBreakWhen = 70;
+	tLoopTest = 71; 
+	tLoopEnd = 72;
+
+	{ tWhileTest = 68; removed old while T-code } 
+	{ tWhileEnd = 69; removed old while T-code } 
+	{ tRepeatTest = 70; removed old repeat T-code } 
+	tSkipProc = 73;
+	tCallEnd = 74;
+	tLineNumber = 75;
+	tTrap = 76;
+	lastCompoundOutputToken = 76;
 	
 	{ added new T-code tokens to handle JT strings } 
-	tConcatenate = 75;
-	tSubstring = 76;
-	tLength = 77;
-	tStringEqual = 78;
+	tConcatenate = 77;
+	tSubstring = 78;
+	tLength = 79;
+	tStringEqual = 80;
 
-	tEndOfFile = 79;
-	lastOutputToken = 79;
+	tEndOfFile = 81;
+	lastOutputToken = 81;
 
 	{ Input/Output Tokens }
 
