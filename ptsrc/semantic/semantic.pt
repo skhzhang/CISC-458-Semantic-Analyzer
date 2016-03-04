@@ -233,21 +233,21 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tVarParm = 21;
 	tFetchAddress = 22;
 	tFetchInteger = 23;
-	tFetchChar = 24;
+	tFetchString = 24; { changed from tFetchChar } 
 	tFetchBoolean = 25;
 	tAssignBegin = 26;
 	tAssignAddress = 27;
 	tAssignInteger = 28;
-	tAssignChar = 29;
+	tAssignString = 29; { changed from tAssignChar } 
 	tAssignBoolean = 30;
 	tStoreParmAddress = 31;
 	tStoreParmInteger = 32;
-	tStoreParmChar = 33;
+	tStoreParmString  = 33; { changed from tStoreParmChar } 
 	tStoreParmBoolean = 34;
 	tSubscriptBegin = 35;
 	tSubscriptAddress = 36;
 	tSubscriptInteger = 37;
-	tSubscriptChar = 38;
+	tSubscriptString = 38; { changed from tSubscriptChar } 
 	tSubscriptBoolean = 39;
 	tArrayDescriptor = 40;
 	tFileDescriptor = 41;
@@ -268,7 +268,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tLiteralAddress = 56;
 	firstCompoundOutputToken = 56;
 	tLiteralInteger = 57;
-	tLiteralChar = 58;
+	{ removed redundant tLiteralChar token } 
 	tLiteralBoolean = 59;
 	tLiteralString = 60;
 	tStringDescriptor = 61;
@@ -286,8 +286,16 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tLineNumber = 73;
 	tTrap = 74;
 	lastCompoundOutputToken = 74;
-	tEndOfFile = 75;
-	lastOutputToken = 75;
+
+	
+	{ added new T-code tokens to handle JT strings } 
+	tConcatenate = 75;
+	tSubstring = 76;
+	tLength = 77;
+	tStringEqual = 78;
+
+	tEndOfFile = 79;
+	lastOutputToken = 79;
 
 	{ Input/Output Tokens }
 

@@ -107,21 +107,21 @@ Output : 	% corresponds to coder.ssl input
 	tVarParm
 	tFetchAddress
 	tFetchInteger
-	tFetchChar
+	tFetchString % changed from tFetchChar
 	tFetchBoolean
 	tAssignBegin
 	tAssignAddress
 	tAssignInteger
-	tAssignChar
+	tAssignString % changed from tAssignChar
 	tAssignBoolean
 	tStoreParmAddress
 	tStoreParmInteger
-	tStoreParmChar
+	tStoreParmString % changed from tStoreParmChar
 	tStoreParmBoolean
 	tSubscriptBegin
 	tSubscriptAddress
 	tSubscriptInteger
-	tSubscriptChar
+	tSubscriptString % changed from tSubscriptChar
 	tSubscriptBoolean
 	tArrayDescriptor
 	tFileDescriptor
@@ -144,7 +144,7 @@ Output : 	% corresponds to coder.ssl input
 	tLiteralAddress 
 	firstCompoundOutputToken = tLiteralAddress
 	tLiteralInteger
-	tLiteralChar
+	% removed tLiteralChar token
 	tLiteralBoolean
 	tLiteralString
 	tStringDescriptor
@@ -162,6 +162,12 @@ Output : 	% corresponds to coder.ssl input
 	tLineNumber
 	tTrap
 	lastCompoundOutputToken = tTrap
+
+	% added new T-code tokens to handle JT strings
+	tConcatenate
+	tSubstring
+	tLength
+	tStringEqual
 
 	tEndOfFile
 	lastOutputToken = tEndOfFile;
@@ -1541,12 +1547,12 @@ Statement :
 		@BeginStmt
 	    | sIfStmt:
 		@IfStmt
-	    | sWhileStmt:
-		@WhileStmt
+	    % | sWhileStmt:
+		% @WhileStmt
 	    | sCaseStmt:
 		@CaseStmt
-	    | sRepeatStmt:
-		@RepeatStmt
+	    % | sRepeatStmt:
+		% @RepeatStmt
 	    | sNullStmt:
 	];
 
@@ -1757,32 +1763,7 @@ IfStmt :
 	.tIfEnd
 	oFixPopForwardBranch;
 
-WhileStmt :
-	.tWhileBegin
-	oFixPushTargetAddress		% top-of-loop branch target
-	@BooleanControlExpression
-	.tWhileTest
-	oFixPushForwardBranch
-	oEmitNullAddress		% exit branch
-	oFixSwap		% top-of-loop target back on top
-	@Statement
-	.tWhileEnd
-	oFixPopTargetAddress
-	oFixPopForwardBranch;
-
-RepeatStmt :
-	.tRepeatBegin
-	oFixPushTargetAddress		% top-of-loop branch target
-	{[
-	    | sRepeatEnd:
-		>
-	    | *:
-		@Statement
-	]}
-	.tRepeatControl
-	@BooleanControlExpression
-	.tRepeatTest
-	oFixPopTargetAddress;
+% removed while and repeat statement rules
 
 CaseStmt :
 	.tCaseBegin
@@ -1933,7 +1914,7 @@ Operand :
 		    | one:
 			oSymbolStkPush(syExpression)
 			oTypeStkPush(tpChar)
-			.tLiteralChar
+			.tLiteralString
 			oEmitString
 		    | *:
 			oSymbolStkPush(syExpression)
@@ -2195,7 +2176,7 @@ VariableExtension :
 		    | tpInteger, tpSubrange:
 			.tSubscriptInteger
 		    | tpChar:
-			.tSubscriptChar
+			.tSubscriptString
 		    | tpBoolean:
 			.tSubscriptBoolean
 		]
@@ -2215,7 +2196,7 @@ ConstantOperand :
 	    | tpInteger, tpSubrange:
 		.tLiteralInteger
 	    | tpChar:
-		.tLiteralChar
+		.tLiteralString
 	    | tpBoolean:
 		.tLiteralBoolean
 	    | tpPackedArray:	% always a named literal string
@@ -2234,7 +2215,7 @@ VariableOperand :
 	    | tpInteger, tpSubrange, tpFile:
 		.tFetchInteger		% replace address with value
 	    | tpChar:
-		.tFetchChar
+		.tFetchString
 	    | tpBoolean:
 		.tFetchBoolean
 	    % The caller is responsible for detecting illegal situations
@@ -2461,7 +2442,7 @@ AssignProcedure :
 				oValuePush(one)
 				oEmitValue
 				oValuePop
-				.tSubscriptChar
+				.tSubscriptString
 				.tVarParm
 			    | *:
 			]
@@ -2552,7 +2533,7 @@ WriteProcedure :
 						    oValuePush(one)
 						    oEmitValue
 						    oValuePop
-						    .tSubscriptChar
+						    .tSubscriptString
 						    .tVarParm
 						| *:
 					    ]
@@ -2643,7 +2624,7 @@ WriteProcedure :
 				oValuePush(one)
 				oEmitValue
 				oValuePop
-				.tSubscriptChar
+				.tSubscriptString
 				.tVarParm
 			    | *:
 			]
@@ -2685,7 +2666,7 @@ WriteStandardExpnList :
 			oValuePush(one)
 			oEmitValue
 			oValuePop
-			.tSubscriptChar
+			.tSubscriptString
 			.tVarParm
 		    | *:
 		]
