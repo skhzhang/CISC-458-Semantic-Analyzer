@@ -1,0 +1,8 @@
+program P (output)
+{
+	let c = 27;
+	var x,y : integer;
+	type t : integer;
+	begin
+	end
+}

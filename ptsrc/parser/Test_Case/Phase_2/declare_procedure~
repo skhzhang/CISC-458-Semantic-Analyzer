@@ -1,0 +1,12 @@
+{ This program tries to declare two functions. One is a public function with parameter and one is a private function without parameters}
+
+program P (output) 
+{
+	public function P (var a : integer, var b : integer) 
+	{
+	}
+
+	function Q ()
+	{
+	}
+}

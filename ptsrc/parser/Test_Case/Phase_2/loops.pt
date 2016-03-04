@@ -1,0 +1,9 @@
+program P (output)
+{
+	loop
+	{
+		a = 0;
+		break when (a == b);
+		b = 1;
+	}
+}

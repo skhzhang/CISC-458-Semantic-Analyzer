@@ -1,0 +1,10 @@
+program P (output) 
+{
+	public function P (var a : integer, var b : integer) 
+	{
+	}
+
+	function Q ()
+	{
+	}
+}

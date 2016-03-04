@@ -1,0 +1,454 @@
+% PT Scanner.ssl   Ver. 1.03
+%
+% Date:  30 Jun 1980
+%	 (revised 22 Jan 2002)
+%
+% Author:  Alan Rosselet
+%
+% Abstract
+%     The scanner breaks a PT source program up into syntax tokens.
+%   It removes token separators - blanks, tabs, comments.  The
+%   scanner detects these lexical errors:  unclosed comments,
+%   unclosed literals, literals that cross a line boundary,
+%   illegal characters and integers followed by identifiers with no
+%   separator between them.
+
+Input :
+	lLetter 
+	firstCharClass = lLetter 
+	lDigit
+	lPlus		'+'
+	lMinus		'-'
+	lStar		'*'
+	lColon		':'
+	lEquals		'='
+	lDot		'.'
+	lComma		','
+	lSemicolon	';'
+#ifndef NEW
+	lQuote
+#else /* NEW */
+	lQuote		'"' % uses double quotes now from blank
+#endif /* NEW */
+	lLeftAngle	'<'
+	lRightAngle	'>'
+	lLeftParen	'('
+	lRightParen	')'
+	lLeftBracket	'['
+	lRightBracket	']'
+	lLeftBrace	'{'
+	lRightBrace	'}'
+	lBlank
+	lIllegal
+	lNewLine
+	lTab
+	lNewPage 
+	lEndFile
+#ifndef NEW
+	lastCharClass = lEndFile;
+#else /* NEW */
+	lSlash		'/' % added input token and symbol for forward slash character
+	lHash		'#' % added input token and symbol for hash character
+	lExclam		'!' % added input token and symbol for exclamation character
+	lAt		'@' % added input token and symbol for at character
+	lastCharClass = lAt;
+#endif /* NEW */
+
+Output :
+	% Keyword tokens -
+	%   Tokens pDiv through pRepeat are keywords which will be separated
+	%   from user defined identifiers by the Screener.  This Scanner
+	%   treats them all as identifiers.
+	pDiv 
+	firstKeywordToken = pDiv
+	pMod
+	pOr
+	pAnd
+	pNot
+#ifndef NEW
+	pThen
+#else /* NEW */
+	% pThen, removed old keyword
+#endif /* NEW */
+	pElse
+	pOf
+#ifndef NEW
+	pEnd
+	pUntil
+	pDo
+#else /* NEW */
+	% pEnd, removed old keyword 
+	% pUntil, removed old keyword
+	% pDo, removed old keyword
+#endif /* NEW */
+	pArray
+	pFile
+	pPacked
+	pProgram
+#ifndef NEW
+	pConst
+#else /* NEW */
+	% pConst, removed old keyword.
+#endif /* NEW */
+	pVar
+	pType
+#ifndef NEW
+	pProcedure
+	pBegin
+#else /* NEW */
+	% pProcedure removed old keyword
+	% pBegin removed old keyword
+#endif /* NEW */
+	pIf
+	pCase
+#ifndef NEW
+	pWhile
+	pRepeat
+	lastKeywordToken = pRepeat
+#else /* NEW */
+	% pWhile, removed old keyword
+	% pRepeat, removed old keyword
+
+	% Add new tokens here
+	pLet % added a new token for keyword let
+	pFunction % added a new token for keyword function
+	pSwitch % added a new token for keyword switch
+	pDefault % added a new token for keyword default
+	pElseif % added a new token for keyword elseif
+	pLoop % added a new token for keyword loop
+	pBreak % added a new token for keyword break
+	pWhen % added a new token for keyword when
+	pClass % added a new token for keyword class
+	pPublic % added a new token for keyword public
+	lastKeywordToken = pPublic  % changed since pRepeat has been removed.
+#endif /* NEW */
+
+	% Scanner tokens -
+	%   These are the tokens actually recognized by the Scanner itself.
+
+	% Compound tokens - 
+	%   These will be sent to the parser with a value or index.
+	pIdentifier 
+	firstCompoundInputToken = pIdentifier
+	pInteger
+	pLiteral
+	lastCompoundInputToken = pLiteral
+
+	% Non-compound tokens - 
+	%   These tokens simply represent themselves.
+	pNewLine
+	pEndFile
+	pPlus
+	pMinus
+	pStar
+	pColonEquals
+	pDot
+	pComma
+	pSemicolon
+	pColon
+	pEquals
+	pNotEqual
+	pLess
+	pLessEqual
+	pGreaterEqual
+	pGreater
+	pLeftParen
+	pRightParen
+	pLeftBracket
+	pRightBracket
+#ifdef NEW
+	pLeftBrace % added new token for left bracelet
+	pRightBrace % added new token for right bracelet
+#endif /* NEW */
+	pDotDot
+#ifndef NEW
+	lastSyntaxToken = pDotDot;
+#else /* NEW */
+	pSlash % added new output token for forward slash character
+	pHash % added new output token for hash character
+	pExclam % added new output token for exclamation character
+	pAt % added new output token for at character
+	pDoubleEq % added new output token for double equals symbols
+	lastSyntaxToken = pDoubleEq;
+#endif /* NEW */
+
+Error :
+	eIllegalChar = 5
+	firstScanError = eIllegalChar
+	eLiteralLine
+	eLiteralEOF
+	eCommentEOF
+	eNoSeparator
+	lastScanError = eNoSeparator;
+
+mechanism Buffer :
+    % Buffer saves the characters associated with the
+    % compound tokens identifier, integer and literal.
+
+    oBufferSave;
+	% Save the character form of the last accepted lexical token.
+
+
+
+
+rules
+
+% Note that the order of choice alternatives
+% may have a significant effect on performance
+% under some implementations of S/SL.
+Scan :
+	{[
+	    | lBlank :
+	    | lLetter:
+		oBufferSave
+		@Identifier
+	    | lNewLine:
+		.pNewLine
+	    | lTab:
+	    | ';':
+		.pSemicolon
+#ifndef NEW
+	    | '(':
+#else /* NEW */
+	    | '/': % added slash
+#endif /* NEW */
+		[
+		    | '*':
+#ifndef NEW
+			@AlternateComment
+#else /* NEW */
+			@Comment
+		    | '/':
+			@LineComment
+#endif /* NEW */
+		    | *:
+#ifndef NEW
+			.pLeftParen
+#else /* NEW */
+			#eIllegalChar
+#endif /* NEW */
+		]
+#ifdef NEW
+	    | '(': % removed comment functionality
+		.pLeftParen
+#endif /* NEW */
+	    | ')':
+		.pRightParen
+	    | '[':
+		.pLeftBracket
+	    | ']':
+		.pRightBracket
+	    | ',':
+		.pComma
+	    | ':':
+		[
+		    | '=':
+			.pColonEquals
+		    | *:
+			.pColon
+		]
+	    | lDigit:
+		oBufferSave
+		@Integer
+		[
+		    | lLetter:
+			#eNoSeparator
+			oBufferSave
+			@Identifier
+		    | *:
+		]
+#ifndef NEW
+	    | '=':
+		.pEquals
+#else /* NEW */
+	    | '=': % added functionality for a double equals token emission for a pair of equals
+		[
+		    | '=':
+			.pDoubleEq
+		    | *:
+			.pEquals
+		]
+#endif /* NEW */
+	    | '+':
+		.pPlus
+#ifndef NEW
+	    | lQuote:
+#else /* NEW */
+	    | '"':  % change to " from lQuote
+#endif /* NEW */
+		@Literal
+	    | '-':
+		.pMinus
+	    | '.':
+		[
+		    | '.':
+			.pDotDot
+		    | *:
+			.pDot
+		]
+	    | '<':
+		[
+		    | '>':
+			.pNotEqual
+		    | '=':
+			.pLessEqual
+		    | *:
+			.pLess
+		]
+	    | '>':
+		[
+		    | '=':
+			.pGreaterEqual
+		    | *:
+			.pGreater
+		]
+#ifndef NEW
+	    | '{':
+		@Comment
+#else /* NEW */
+	    | '!': 
+		[
+		    | '=':
+			.pNotEqual
+		    | *:
+			.pExclam
+		]
+#endif /* NEW */
+	    | '*':
+		.pStar
+#ifdef NEW
+	    | '{': % remove alt comment functionality of {
+		.pLeftBrace
+	    | '}':
+		.pRightBrace
+#endif /* NEW */
+	    | lNewPage:
+#ifndef NEW
+	    | lIllegal, '}':
+#else /* NEW */
+	    | lIllegal:
+#endif /* NEW */
+		#eIllegalChar
+	    | lEndFile:
+		.pEndFile
+	]};
+
+Identifier :
+	% Assemble an identifier token
+
+	{[
+	    | lLetter, lDigit:
+		oBufferSave
+	    | *:
+		.pIdentifier
+		>
+	]};
+
+Integer :
+	% Assemble an integer token
+
+	{[
+	    | lDigit:
+		oBufferSave
+	    | *:
+		.pInteger
+		>
+	]};
+
+Literal :
+	% Assemble a literal string token
+
+	{[
+#ifndef NEW
+	    | lQuote:
+#else /* NEW */
+	    | '"':    % change to double quote from lQuote
+#endif /* NEW */
+		[
+#ifndef NEW
+		    | lQuote:
+#else /* NEW */
+		    | '"':  % change to double quote from lQuote
+#endif /* NEW */
+			oBufferSave
+		    | *:
+			.pLiteral
+			>
+		]
+	    | lNewLine:		% literal must not cross a line boundary
+		#eLiteralLine
+		.pNewLine
+		>
+	    | lEndFile:		% literal must be closed before EOF
+		#eLiteralEOF
+		.pEndFile
+		>
+	    | *:	% literal may contain any other character
+		?
+		oBufferSave
+	]};
+
+#ifdef NEW
+% change from } to */
+#endif /* NEW */
+Comment :
+	% Discard the contents of a comment
+
+	{[
+#ifndef NEW
+	    | '}':
+		>
+#else /* NEW */
+	    | '*':
+		[
+		    | '/':
+			>
+		    | *:
+		]
+#endif /* NEW */
+	    | lNewLine:
+		.pNewLine
+	    | lEndFile:		% comment must be closed before EOF
+		#eCommentEOF
+		.pEndFile
+		>
+	    | *:	% comment may contain any other character
+		?
+	]};
+
+#ifndef NEW
+AlternateComment :
+#else /* NEW */
+% removed AlternateComment and change to LineComment
+LineComment :
+	% Discard the contents of a comment
+
+#endif /* NEW */
+	{[
+#ifndef NEW
+	    | '*':
+		[
+		    | ')':
+			>
+		    | *:
+		]
+#endif /* ! NEW */
+	    | lNewLine:
+		.pNewLine
+#ifndef NEW
+	    | lEndFile:
+		#eCommentEOF
+		.pEndFile
+#endif /* ! NEW */
+		>
+#ifndef NEW
+	    | *:
+#else /* NEW */
+	    | lEndFile:		% comment must be closed before EOF
+		>
+	    | *:	% comment may contain any other character
+#endif /* NEW */
+		?
+	]};
+
+end

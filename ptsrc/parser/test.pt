@@ -1,0 +1,12 @@
+program P (output)
+{
+	var a, b : integer;
+	if (a == b) {
+		a = 0;
+		b = 0;
+	}
+	else {
+		a = 2;
+		b = 2;
+	}
+}

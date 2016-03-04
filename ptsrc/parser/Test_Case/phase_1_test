@@ -1,0 +1,15 @@
+folder=$1
+
+result=./$folder/result.txt
+touch $result
+echo > $result
+
+for file in $folder/*.pt;
+do	
+	ptc -o1 -t1 -L ~/cisc458/ptsrc/lib/pt $file
+	echo $file >> $result
+	echo ------------------------------------------------------------------------------------- >> $result
+	ssltrace "ptc -o1 -t1 -L ../../lib/pt $file" ~/cisc458/ptsrc/parser/scan.def -i >> $result
+	ssltrace "ptc -o1 -t1 -L ../../lib/pt $file" ~/cisc458/ptsrc/parser/scan.def -e >> $result
+	echo ------------------------------------------------------------------------------------- >> $result
+done

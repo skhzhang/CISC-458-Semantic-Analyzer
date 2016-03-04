@@ -1,0 +1,10 @@
+program HelloWorld(output);
+
+{ this is a simple program print the bible
+
+}
+
+begin
+	write('Hello World');
+	writeln
+end.
