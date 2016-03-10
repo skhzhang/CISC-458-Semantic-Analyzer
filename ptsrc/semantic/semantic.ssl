@@ -586,12 +586,12 @@ type TrapKind :
 	trReadln = 4
 	trWrite = 5
 	trWriteln = 6
-	trWriteString = 7
+	% trWriteString = 7 % remove redundant trWriteString
 	trWriteInteger = 8
-	trWriteChar = 9
 	trReadInteger = 10
-	trReadChar = 11
 	trAssign = 12;
+	trReadString = 107 % change trReadChar = 11 to trReadString = 107
+	trWriteString = 108 % change trWriteChar = 9 to trWriteString = 108
 
 
 mechanism Emit :
@@ -2734,7 +2734,7 @@ WriteChar :
 	[ oTypeStkChooseKind
 	    | tpString:
 		.tTrap
-		oEmitTrapKind(trWriteChar)
+		oEmitTrapKind(trWriteString)
 	    | tpInteger, tpSubrange:
 		.tTrap
 		oEmitTrapKind(trWriteInteger)
@@ -3053,7 +3053,7 @@ ReadChar :
 	[ oTypeStkChooseKind
 	    | tpString:
 		.tTrap
-		oEmitTrapKind(trReadChar)
+		oEmitTrapKind(trReadString)
 	    | tpInteger, tpSubrange:
 		.tTrap
 		oEmitTrapKind(trReadInteger)
