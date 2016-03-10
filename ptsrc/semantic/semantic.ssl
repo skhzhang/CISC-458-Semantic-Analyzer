@@ -948,7 +948,7 @@ ConstantValue :		% An identifier token has just been accepted
 			#eNullString
 			@SymbolStkPushCharConstant
 		    | one:
-			oSymbolStkLinkToStandardType(stdChar)
+			oSymbolStkLinkToStandardType(stdString)
 			oSymbolStkEnterStringValue
 		    | *:
 			% Emit a branch around the string since
@@ -965,7 +965,7 @@ ConstantValue :		% An identifier token has just been accepted
 			oFixPopForwardBranch
 			oTypeStkPush(tpPackedArray)	% means literal string
 			oTypeStkEnterBounds
-			oTypeStkLinkToStandardComponentType(stdChar)
+			oTypeStkLinkToStandardComponentType(stdString)
 			oTypeTblEnter
 			oSymbolStkEnterTypeReference
 			oTypeStkPop
@@ -975,6 +975,19 @@ ConstantValue :		% An identifier token has just been accepted
 	]
 	oSymbolTblEnter
 	oSymbolStkPop;		% name being defined
+
+
+% added new rule to handle class definitions
+% should push the variables in the class scope onto the symbol table, then promote only the variables that are public to the enclosing scope (1 lower lexical level), then decrement the lexical  level while keeping the symbol tables at the top when the class definition completes
+ClassDefinition: 
+	sClass
+	oSymbolTblPushScope
+
+	@Block
+
+	oSymbolTblStripScope
+	oSymbolTblMergeScope;
+
 
 TypeDefinitions :	% process named type definitions
 	{[
@@ -1954,7 +1967,7 @@ Operand :
 			oFixPopTargetAddress
 			oTypeStkPush(tpPackedArray)
 			oTypeStkEnterBounds
-			oTypeStkLinkToStandardComponentType(stdChar)
+			oTypeStkLinkToStandardComponentType(stdString)
 		]
 		oValuePop
 		oValuePop
@@ -3220,7 +3233,7 @@ SymbolStkPushCharConstant :
 	oValuePush(zero)
 	oSymbolStkEnterValue
 	oValuePop
-	oSymbolStkLinkToStandardType(stdChar);
+	oSymbolStkLinkToStandardType(stdString);
 
 
 SymbolStkPushIntegerType :
