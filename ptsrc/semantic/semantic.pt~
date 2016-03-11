@@ -362,6 +362,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	ten = 10;
 	byteSize = 1;
 	wordSize = 4;
+	stringSize = 1024; { add type size for Strings }
 	{ Type 14 }
 	no = 0;
 	yes = 1;
@@ -369,7 +370,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	firstPredeclaredId = 1;
 	firstPredeclaredType = 1;
 	pidInteger = 1;
-	pidChar = 2;
+	pidString = 2; { changed from pidChar to pidString } 
 	pidBoolean = 3;
 	pidText = 4;
 	lastPredeclaredType = 4;
@@ -393,7 +394,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	lastSpecialId = 19;
 	{ Type 16 }
 	stdInteger = 0;
-	stdChar = 1;
+	stdString = 1; { changed from stdChar to new std type stdstring }
 	stdBoolean = 2;
 	stdText = 3;
 	{ Type 17 }
@@ -406,6 +407,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	syExternal = 6;
 	syExpression = 7;
 	syUndefined = 8;
+	syPublicProcedure = 9; { added public procedure symbol kind }
 	{ Type 18 }
 	rtReset = 1;
 	rtRewrite = 2;
@@ -425,7 +427,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	stdNull = 2;
 	{ Type 20 }
 	tpInteger = 0;
-	tpString = 1;
+	tpString = 1; { changed from tpChar to tpString }
 	tpBoolean = 2;
 	tpSubrange = 3;
 	tpArray = 4;
@@ -839,7 +841,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 
 	{ Predefined type table entries }
 	standardIntegerTypeRef :  TypeTblReference;
-	standardCharTypeRef :  TypeTblReference;
+	standardStringTypeRef :  TypeTblReference; { changed from standardCharTypeRef } 
 	standardBooleanTypeRef :  TypeTblReference;
 	standardTextTypeRef :  TypeTblReference;
 	
@@ -958,10 +960,10 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	    standardIntegerTypeRef := pidInteger;
 
 	    { char }
-	    symbolTblKind[pidChar] := syType;
-	    symbolTblTypeTblLink[pidChar] := pidChar;
-	    typeTblKind[pidChar] := tpString;
-	    standardCharTypeRef := pidChar;
+	    symbolTblKind[pidString] := syType;
+	    symbolTblTypeTblLink[pidString] := pidString;
+	    typeTblKind[pidString] := tpString; { changed from tpChar }
+	    standardStringTypeRef := pidString; { changed from standardCharTypeRef }
 
 	    { Boolean }
 	    symbolTblKind[pidBoolean] := syType;
@@ -973,8 +975,8 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	    symbolTblKind[pidText] := syType;
 	    symbolTblTypeTblLink[pidText] := pidText;
 	    typeTblKind[pidText] := tpFile;
-	    typeTblComponentLink[pidText] := standardCharTypeRef;
-	    standardTextTypeRef := pidText;
+	    typeTblComponentLink[pidText] := standardStringTypeRef; { changed from standardCharTypeRef }
+	    standardTextTypeRef := pidString; { changed from pidText to pidString } 
 
 	    { true (1) }
 	    symbolTblKind[pidTrue] := syConstant;
@@ -1806,8 +1808,8 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 					begin
 					    while link > 0 do
 						link := symbolTblIdentLink[link];
-					    identSymbolTblRef[-link] :=
-						symbolTblIdentLink[i];
+					    	identSymbolTblRef[-link] :=
+							symbolTblIdentLink[i];
 					end;
 
 				    i := i - 1
@@ -1924,8 +1926,9 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			  procedure's i'th formal parameter where i
 			  is the value of the top count stack entry. }
 			begin
+			{ changed assertion so the top of the symbol stack can also be a public procedure }
 			    Assert((symbolStkKind[symbolStkTop] =
-				syProcedure), assert24);
+				syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure), assert24);
 			    SymbolStkPushIdentifier(symbolStkSymbolTblRef
 				[symbolStkTop] + countStack[countStackTop]);
 			end;
@@ -1941,15 +1944,15 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			    stdInteger:
 				symbolStkTypeTblLink[symbolStkTop] :=
 					standardIntegerTypeRef;
-			    stdChar:
+			    stdString: { changed from stdChar to reference String type instead }
 				symbolStkTypeTblLink[symbolStkTop] :=
-					standardCharTypeRef;
+					standardStringTypeRef; { changed from standardCharTypeRef }
 			    stdBoolean:
 				symbolStkTypeTblLink[symbolStkTop] :=
 					standardBooleanTypeRef;
 			    stdText:
 				symbolStkTypeTblLink[symbolStkTop] :=
-					standardTextTypeRef;
+					standardTextTypeRef; 
 			end;
 
 		    oSymbolStkEnterValue:
@@ -2115,9 +2118,9 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				stdInteger:
 				    typeStkComponentLink[typeStkTop] :=
 					standardIntegerTypeRef;
-				stdChar:
+				stdString: { changed from stdChar to reference String type instead }
 				    typeStkComponentLink[typeStkTop] :=
-					standardCharTypeRef;
+					standardStringTypeRef; { changed from standardCharTypeRef }
 				stdBoolean:
 				    typeStkComponentLink[typeStkTop] :=
 					standardBooleanTypeRef;
@@ -2443,6 +2446,8 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			    tpBoolean:
 				dataAreaEnd := dataAreaEnd + byteSize;
 			    { added allocation handling of the string type; stringSize is size 1024 defined in semantic.ssl }
+			    tpString:
+				dataAreaEnd := dataAreaEnd + stringSize;
 			    tpArray, tpPackedArray:
 				begin
 				    size := typeStkUpperBound[typeStkTop]

@@ -285,7 +285,7 @@
 	firstPredeclaredId = 1;
 	firstPredeclaredType = 1;
 	pidInteger = 1;
-	pidChar = 2;
+	pidString = 2;
 	pidBoolean = 3;
 	pidText = 4;
 	lastPredeclaredType = 4;
