@@ -878,12 +878,15 @@ Block :
 	@BeginStmt;
 
 ConstantDefinitions :		% Process named constant definitions
-	[ % removed loop
-	    | sIdentifier:
-		@ConstantValue
-	    | *:
-		>
-	]; % removed loop
+%	{[
+%	    | sIdentifier:
+%		@ConstantValue
+%	    | *:
+%		>
+%	]};  
+% removed loop
+	sIdentifier:
+		@ConstantValue;
 
 ConstantValue :		% An identifier token has just been accepted
 	oSymbolStkPushLocalIdentifier
@@ -977,8 +980,9 @@ ConstantValue :		% An identifier token has just been accepted
 	oSymbolStkPop;		% name being defined
 
 TypeDefinitions :	% process named type definitions
-	[ % removed loop
-	    | sIdentifier:
+	%{[  removed loop
+	    %| sIdentifier:
+	    sIdentifer:
 		oSymbolStkPushLocalIdentifier
 		@TypeBody
 		[ oSymbolStkChooseKind
@@ -1026,9 +1030,9 @@ TypeDefinitions :	% process named type definitions
 		oSymbolStkPop
 		oTypeStkPop
 		oTypeStkPop
-	    | *:
-		>
-	]; % removed loop
+	    %| *:
+		%>
+	;%]}; % removed loop
 
 TypeBody :
 	% Push a type stack entry for the structure type (e.g. array)
