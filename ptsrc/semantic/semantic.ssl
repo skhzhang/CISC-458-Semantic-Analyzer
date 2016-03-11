@@ -586,12 +586,12 @@ type TrapKind :
 	trReadln = 4
 	trWrite = 5
 	trWriteln = 6
-	trWriteString = 7
+	% trWriteString = 7 % remove redundant trWriteString
 	trWriteInteger = 8
-	trWriteChar = 9
 	trReadInteger = 10
-	trReadChar = 11
 	trAssign = 12;
+	trReadString = 107 % change trReadChar = 11 to trReadString = 107
+	trWriteString = 108 % change trWriteChar = 9 to trWriteString = 108
 
 
 mechanism Emit :
@@ -878,12 +878,15 @@ Block :
 	@BeginStmt;
 
 ConstantDefinitions :		% Process named constant definitions
-	{[
-	    | sIdentifier:
-		@ConstantValue
-	    | *:
-		>
-	]};
+%	{[
+%	    | sIdentifier:
+%		@ConstantValue
+%	    | *:
+%		>
+%	]};  
+% removed loop
+	sIdentifier:
+		@ConstantValue;
 
 ConstantValue :		% An identifier token has just been accepted
 	oSymbolStkPushLocalIdentifier
@@ -990,8 +993,9 @@ ClassDefinition:
 
 
 TypeDefinitions :	% process named type definitions
-	{[
-	    | sIdentifier:
+	%{[  removed loop
+	    %| sIdentifier:
+	    sIdentifer:
 		oSymbolStkPushLocalIdentifier
 		@TypeBody
 		[ oSymbolStkChooseKind
@@ -1039,9 +1043,9 @@ TypeDefinitions :	% process named type definitions
 		oSymbolStkPop
 		oTypeStkPop
 		oTypeStkPop
-	    | *:
-		>
-	]};
+	    %| *:
+		%>
+	;%]}; % removed loop
 
 TypeBody :
 	% Push a type stack entry for the structure type (e.g. array)
@@ -2747,7 +2751,7 @@ WriteChar :
 	[ oTypeStkChooseKind
 	    | tpString:
 		.tTrap
-		oEmitTrapKind(trWriteChar)
+		oEmitTrapKind(trWriteString)
 	    | tpInteger, tpSubrange:
 		.tTrap
 		oEmitTrapKind(trWriteInteger)
@@ -3066,7 +3070,7 @@ ReadChar :
 	[ oTypeStkChooseKind
 	    | tpString:
 		.tTrap
-		oEmitTrapKind(trReadChar)
+		oEmitTrapKind(trReadString)
 	    | tpInteger, tpSubrange:
 		.tTrap
 		oEmitTrapKind(trReadInteger)
