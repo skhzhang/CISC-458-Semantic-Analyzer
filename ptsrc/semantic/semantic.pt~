@@ -66,79 +66,84 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	oSymbolTblPushScope = 16;
 	oSymbolTblPopScope = 17;
 	oSymbolTblLookupExternal = 18; { >>14 }
-	oSymbolStkPush = 19; { (17) }
-	oSymbolStkPushIdentifier = 20;
-	oSymbolStkPushLocalIdentifier = 21;
-	oSymbolStkPushStandardVariable = 22; { (19) }
-	oSymbolStkPushFormalParameter = 23;
-	oSymbolStkSetKind = 24; { (17) }
-	oSymbolStkLinkToStandardType = 25; { (16) }
-	oSymbolStkEnterValue = 26;
-	oSymbolStkEnterStringValue = 27;
-	oSymbolStkEnterCodeAddress = 28;
-	oSymbolStkEnterDataAddress = 29;
-	oSymbolStkEnterTypeReference = 30;
-	oSymbolStkChooseKind = 31; { >>17 }
-	oSymbolStkChooseStandardFile = 32; { >>19 }
-	oSymbolStkChooseStandardRoutine = 33; { >>18 }
-	oSymbolStkPop = 34;
-	oTypeTblEnter = 35;
-	oTypeTblUpdate = 36;
-	oTypeStkPush = 37; { (20) }
-	oTypeStkPushSymbol = 38;
-	oTypeStkPushComponent = 39;
-	oTypeStkSetKind = 40; { (20) }
-	oTypeStkSetRecursionFlag = 41; { (14) }
-	oTypeStkChooseRecursionFlag = 42; { >>14 }
-	oTypeStkSetPackedComponentFlag = 43; { (14) }
-	oTypeStkChoosePackedComponentFlag = 44; { >>14 }
-	oTypeStkLinkToStandardComponentType = 45; { (16) }
-	oTypeStkEnterBounds = 46;
-	oTypeStkVerifyBounds = 47; { >>14 }
-	oTypeStkEnterParameterCount = 48;
-	oTypeStkCompareParameterCount = 49; { >>14 }
-	oTypeStkEnterComponentReference = 50;
-	oTypeStkChooseKind = 51; { >>20 }
-	oTypeStkChooseTypeReference = 52; { >>14 }
-	oTypeStkCompareNames = 53; { >>14 }
-	oTypeStkSwap = 54;
-	oTypeStkPop = 55;
-	oEmitNullAddress = 56;
-	oEmitValue = 57;
-	oEmitString = 58;
-	oEmitDataAddress = 59;
-	oEmitTrapKind = 60; { (21) }
-	oEmitCaseBranchTable = 61;
-	oAllocateAlignOnWord = 62;
-	oAllocateVariable = 63;
-	oAllocateVarParameter = 64;
-	oAllocateDescriptor = 65;
-	oValuePush = 66; { (13) }
-	oValuePushInteger = 67;
-	oValuePushStringLength = 68;
-	oValuePushSymbol = 69;
-	oValuePushCount = 70;
-	oValuePushTypeStkLowerBound = 71;
-	oValuePushTypeStkUpperBound = 72;
-	oValueNegate = 73;
-	oValueChoose = 74; { >>13 }
-	oValuePop = 75;
-	oCasePushDisplay = 76;
-	oCasePopDisplay = 77;
-	oCaseLookupLabel = 78; { >>14 }
-	oCasePushLabel = 79;
-	oCountPush = 80; { (13) }
-	oCountPushValue = 81;
-	oCountPop = 82;
-	oCountIncrement = 83;
-	oCountDecrement = 84;
-	oCountChoose = 85; { >>13 }
-	oFixPushForwardBranch = 86;
-	oFixPopForwardBranch = 87;
-	oFixPushTargetAddress = 88;
-	oFixPopTargetAddress = 89;
-	oFixPopAndEnterValue = 90;
-	oFixSwap = 91;
+	
+	{ new semantic operations added } 
+	oSymbolTblStripScope = 19;
+	oSymbolTblMergeScope = 20;
+
+	oSymbolStkPush = 21; { (17) }
+	oSymbolStkPushIdentifier = 22;
+	oSymbolStkPushLocalIdentifier = 23;
+	oSymbolStkPushStandardVariable = 24; { (19) }
+	oSymbolStkPushFormalParameter = 25;
+	oSymbolStkSetKind = 26; { (17) }
+	oSymbolStkLinkToStandardType = 27; { (16) }
+	oSymbolStkEnterValue = 28;
+	oSymbolStkEnterStringValue = 29;
+	oSymbolStkEnterCodeAddress = 30;
+	oSymbolStkEnterDataAddress = 31;
+	oSymbolStkEnterTypeReference = 32;
+	oSymbolStkChooseKind = 33; { >>17 }
+	oSymbolStkChooseStandardFile = 34; { >>19 }
+	oSymbolStkChooseStandardRoutine = 35; { >>18 }
+	oSymbolStkPop = 36;
+	oTypeTblEnter = 37;
+	oTypeTblUpdate = 38;
+	oTypeStkPush = 39; { (20) }
+	oTypeStkPushSymbol = 40;
+	oTypeStkPushComponent = 41;
+	oTypeStkSetKind = 42; { (20) }
+	oTypeStkSetRecursionFlag = 43; { (14) }
+	oTypeStkChooseRecursionFlag = 44; { >>14 }
+	oTypeStkSetPackedComponentFlag = 45; { (14) }
+	oTypeStkChoosePackedComponentFlag = 46; { >>14 }
+	oTypeStkLinkToStandardComponentType = 47; { (16) }
+	oTypeStkEnterBounds = 48;
+	oTypeStkVerifyBounds = 49; { >>14 }
+	oTypeStkEnterParameterCount = 50;
+	oTypeStkCompareParameterCount = 51; { >>14 }
+	oTypeStkEnterComponentReference = 52;
+	oTypeStkChooseKind = 53; { >>20 }
+	oTypeStkChooseTypeReference = 54; { >>14 }
+	oTypeStkCompareNames = 55; { >>14 }
+	oTypeStkSwap = 56;
+	oTypeStkPop = 57;
+	oEmitNullAddress = 58;
+	oEmitValue = 59;
+	oEmitString = 60;
+	oEmitDataAddress = 61;
+	oEmitTrapKind = 62; { (21) }
+	oEmitCaseBranchTable = 63;
+	oAllocateAlignOnWord = 64;
+	oAllocateVariable = 65;
+	oAllocateVarParameter = 66;
+	oAllocateDescriptor = 67;
+	oValuePush = 68; { (13) }
+	oValuePushInteger = 69;
+	oValuePushStringLength = 70;
+	oValuePushSymbol = 71;
+	oValuePushCount = 72;
+	oValuePushTypeStkLowerBound = 73;
+	oValuePushTypeStkUpperBound = 74;
+	oValueNegate = 75;
+	oValueChoose = 76; { >>13 }
+	oValuePop = 77;
+	oCasePushDisplay = 78;
+	oCasePopDisplay = 79;
+	oCaseLookupLabel = 80; { >>14 }
+	oCasePushLabel = 81;
+	oCountPush = 82; { (13) }
+	oCountPushValue = 83;
+	oCountPop = 84;
+	oCountIncrement = 85;
+	oCountDecrement = 86;
+	oCountChoose = 87; { >>13 }
+	oFixPushForwardBranch = 88;
+	oFixPopForwardBranch = 89;
+	oFixPushTargetAddress = 90;
+	oFixPopTargetAddress = 91;
+	oFixPopAndEnterValue = 92;
+	oFixSwap = 93;
 
 	{ Input Tokens }
 	sIdentifier = 0;
@@ -289,20 +294,20 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	{ tWhileTest = 68; removed old while T-code } 
 	{ tWhileEnd = 69; removed old while T-code } 
 	{ tRepeatTest = 70; removed old repeat T-code } 
-	tSkipProc = 71;
-	tCallEnd = 72;
-	tLineNumber = 73;
-	tTrap = 74;
-	lastCompoundOutputToken = 74;
+	tSkipProc = 73;
+	tCallEnd = 74;
+	tLineNumber = 75;
+	tTrap = 76;
+	lastCompoundOutputToken = 76;
 	
 	{ added new T-code tokens to handle JT strings } 
-	tConcatenate = 75;
-	tSubstring = 76;
-	tLength = 77;
-	tStringEqual = 78;
+	tConcatenate = 77;
+	tSubstring = 78;
+	tLength = 79;
+	tStringEqual = 80;
 
-	tEndOfFile = 79;
-	lastOutputToken = 79;
+	tEndOfFile = 81;
+	lastOutputToken = 81;
 
 	{ Input/Output Tokens }
 
@@ -420,7 +425,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	stdNull = 2;
 	{ Type 20 }
 	tpInteger = 0;
-	tpChar = 1;
+	tpString = 1;
 	tpBoolean = 2;
 	tpSubrange = 3;
 	tpArray = 4;
@@ -955,7 +960,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	    { char }
 	    symbolTblKind[pidChar] := syType;
 	    symbolTblTypeTblLink[pidChar] := pidChar;
-	    typeTblKind[pidChar] := tpChar;
+	    typeTblKind[pidChar] := tpString;
 	    standardCharTypeRef := pidChar;
 
 	    { Boolean }
@@ -1781,6 +1786,43 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				end
 			end;
 
+		    { Added implementation of new semantic operation for oSymbolTblStripScope } 
+		    oSymbolTblStripScope:
+			{ like the oSymbolTblPopScope but do not pop/decrement the lexical level at the end }
+			begin
+			    Assert((lexicLevelStackTop >= 1), assert31);
+			    i := symbolTblTop;
+			    symbolTblTop := symbolTblDisplay[lexicLevelStackTop];
+			{ set symbol table reference for each symbol's identifier entry to the one in the enclosing scope/lower lexical level (symbolTblIdentLink values) if there is one so that visibility is removed }
+		
+			while i > symbolTblTop do
+				begin
+				    link := symbolTblIdentLink[i];
+
+				    if link <> null then
+					{ This is not a dummy identifier
+					  generated by the parser's syntax
+					  error recovery procedure.	  }
+					begin
+					    while link > 0 do
+						link := symbolTblIdentLink[link];
+					    identSymbolTblRef[-link] :=
+						symbolTblIdentLink[i];
+					end;
+
+				    i := i - 1
+				end;
+			{ classes do not have parameters so no need to preserve parameter entries? }
+			   end; 
+
+		    { Added implementation of new semantic operation for oSymbolTblMergeScope } 
+		    oSymbolTblMergeScope: 
+			{ simply decrement the lexical level without changing links } 
+			begin
+			    typeTblTop := typeTblDisplay[lexicLevelStackTop];
+                            lexicLevelStackTop := lexicLevelStackTop - 1;    
+		        end;
+
 
 		    { ****
 		      *  *  Symbol Stack Mechanism Operations
@@ -2398,8 +2440,9 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			case typeStkKind[typeStkTop] of
 			    tpInteger, tpSubrange:
 				dataAreaEnd := dataAreaEnd + wordSize;
-			    tpChar, tpBoolean:
+			    tpBoolean:
 				dataAreaEnd := dataAreaEnd + byteSize;
+			    { added allocation handling of the string type; stringSize is size 1024 defined in semantic.ssl }
 			    tpArray, tpPackedArray:
 				begin
 				    size := typeStkUpperBound[typeStkTop]
