@@ -1,4 +1,5 @@
-program Hello (output);
-begin
-end.
-
+program Hello (output)
+{
+	function goodbye() {
+	}
+}

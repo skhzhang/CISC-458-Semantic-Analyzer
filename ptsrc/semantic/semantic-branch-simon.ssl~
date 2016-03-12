@@ -481,7 +481,7 @@ mechanism TypeTable :
 
 type TypeKind :
 	tpInteger
-	tpString
+	tpChar
 	tpBoolean
 	tpSubrange
 	tpArray
@@ -594,10 +594,11 @@ type TrapKind :
 	trReadln = 4
 	trWrite = 5
 	trWriteln = 6
+	trWriteString = 7
 	trWriteInteger = 8
-	trWriteString = 108
+	trWriteChar = 9
 	trReadInteger = 10
-	trReadString = 107
+	trReadChar = 11
 	trAssign = 12;
 
 
@@ -990,7 +991,7 @@ TypeDefinitions :	% process named type definitions
 %	{[
 %	    | sIdentifier:
 % removed loop
-		sIdentifier
+		sIdentifer
 		oSymbolStkPushLocalIdentifier
 		@TypeBody
 		[ oSymbolStkChooseKind
@@ -1037,7 +1038,7 @@ TypeDefinitions :	% process named type definitions
 		oSymbolTblEnter
 		oSymbolStkPop
 		oTypeStkPop
-		oTypeStkPop;
+		oTypeStkPop
 %	    | *:
 %		>
 %	]};
@@ -1379,7 +1380,7 @@ AllocateVar :
 			oAllocateAlignOnWord
 			oSymbolStkEnterDataAddress
 			oAllocateVariable
-		    | tpString, tpBoolean:
+		    | tpChar, tpBoolean:
 			oSymbolStkEnterDataAddress
 			oAllocateVariable
 		    | tpArray:
@@ -1560,7 +1561,7 @@ ProcedurePrologue :
 			[ oTypeStkChooseKind
 			    | tpInteger, tpSubrange:
 				.tStoreParmInteger
-			    | tpString:
+			    | tpChar:
 				.tStoreParmString
 			    | tpBoolean:
 				.tStoreParmBoolean
@@ -1620,7 +1621,7 @@ AssignmentStmt :
 	[ oTypeStkChooseKind
 	    | tpInteger, tpSubrange, tpFile:
 		.tAssignInteger
-	    | tpString:
+	    | tpChar:
 		.tAssignString
 	    | tpBoolean:
 		.tAssignBoolean
@@ -1645,7 +1646,7 @@ CallStmt :
 	    | *:
 	]
 	[ oSymbolStkChooseKind
-	    | syProcedure, syPublicProcedure:
+	    | syProcedure:
 		[ oSymbolStkChooseStandardRoutine
 		    | rtReset:
 			.tTrapBegin
@@ -1757,7 +1758,7 @@ VariableActual :
 			#eParameterTypeMismatch
 		]
 		[ oTypeStkChooseKind
-		    | tpInteger, tpSubrange, tpString, tpBoolean:
+		    | tpInteger, tpSubrange, tpChar, tpBoolean:
 			% Subscripted packed array variables are
 			% illegal as variable actual parameters
 			[ oTypeStkChoosePackedComponentFlag
@@ -1949,10 +1950,10 @@ Operand :
 		    | zero:
 			#eNullString
 			oSymbolStkPush(syExpression)
-			oTypeStkPush(tpString)
+			oTypeStkPush(tpChar)
 		    | one:
 			oSymbolStkPush(syExpression)
-			oTypeStkPush(tpString)
+			oTypeStkPush(tpChar)
 			.tLiteralString
 			oEmitString
 		    | *:
@@ -2072,10 +2073,10 @@ CompareAndSwapTypes :
 		    | *:
 			#eTypeMismatch
 		]
-	    | tpString:
+	    | tpChar:
 		oTypeStkSwap
 		[ oTypeStkChooseKind
-		    | tpString:
+		    | tpChar:
 		    | *:
 			#eTypeMismatch
 		]
@@ -2136,10 +2137,10 @@ CompareRelationalOperandTypes :
 		    | *:
 			#eOperandOperatorTypeMismatch
 		]
-	    | tpString:
+	    | tpChar:
 		oTypeStkPop
 		[ oTypeStkChooseKind
-		    | tpString:
+		    | tpChar:
 		    | *:
 			#eOperandOperatorTypeMismatch
 		]
@@ -2214,14 +2215,14 @@ VariableExtension :
 		[ oTypeStkChooseKind
 		    | tpInteger, tpSubrange:
 			.tSubscriptInteger
-		    | tpString:
+		    | tpChar:
 			.tSubscriptString
 		    | tpBoolean:
 			.tSubscriptBoolean
 		]
 	    | *:
 		[ oTypeStkChooseKind
-		    | tpInteger, tpSubrange, tpString, tpBoolean:
+		    | tpInteger, tpSubrange, tpChar, tpBoolean:
 			oTypeStkSetPackedComponentFlag(no)
 		    | *:
 		]
@@ -2234,7 +2235,7 @@ ConstantOperand :
 	[ oTypeStkChooseKind
 	    | tpInteger, tpSubrange:
 		.tLiteralInteger
-	    | tpString:
+	    | tpChar:
 		.tLiteralString
 	    | tpBoolean:
 		.tLiteralBoolean
@@ -2253,7 +2254,7 @@ VariableOperand :
 	[ oTypeStkChooseKind
 	    | tpInteger, tpSubrange, tpFile:
 		.tFetchInteger		% replace address with value
-	    | tpString:
+	    | tpChar:
 		.tFetchString
 	    | tpBoolean:
 		.tFetchBoolean
@@ -2289,13 +2290,13 @@ FunctionOperand :
 		oSymbolStkPop	% Chr symbol
 		oTypeStkPop
 		oSymbolStkPush(syExpression)
-		oTypeStkPush(tpString)
+		oTypeStkPush(tpChar)
 	    | rtOrd:
 		[
 		    | sParmBegin:
 			@Expression
 			[ oTypeStkChooseKind
-			    | tpString:
+			    | tpChar:
 			    | *:
 				#eCharExpnReqd
 			]
@@ -2489,7 +2490,7 @@ AssignProcedure :
 			    | tpArray, tpPackedArray:	% must be a char array or literal string	
 				oTypeStkPushComponent
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 				    | *:
 					#eFileNameReqd
 				]
@@ -2552,7 +2553,7 @@ WriteProcedure :
 				oTypeStkPushComponent
 				oValuePushSymbol	% file descriptor
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 					{
 					    .tTrapBegin
 					    .tLiteralAddress
@@ -2739,7 +2740,7 @@ WriteChar :
 		[ oTypeStkChooseKind	% of expression being written
 		    | tpInteger, tpSubrange:
 			oValuePush(ten)
-		    | tpString:
+		    | tpChar:
 			oValuePush(one)
 		    | tpPackedArray:	% a literal string
 			oValuePushTypeStkUpperBound
@@ -2752,16 +2753,16 @@ WriteChar :
 		.tParmEnd
 	]
 	[ oTypeStkChooseKind
-	    | tpString:
+	    | tpChar:
 		.tTrap
-		oEmitTrapKind(trWriteString)
+		oEmitTrapKind(trWriteChar)
 	    | tpInteger, tpSubrange:
 		.tTrap
 		oEmitTrapKind(trWriteInteger)
 	    | tpArray, tpPackedArray:	% must be a char array or literal string
 		oTypeStkPushComponent
 		[ oTypeStkChooseKind
-		    | tpString:
+		    | tpChar:
 		    | *:
 			#eWriteExpn
 		]
@@ -2862,7 +2863,7 @@ WritelnProcedure :
 				oTypeStkPushComponent
 				% writeln applies only to text files
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 					% There should not be more parameters
 					[
 					    | sExpnEnd:
@@ -2930,7 +2931,7 @@ ReadProcedure :
 				oValuePushSymbol	% file descriptor
 				oTypeStkPushComponent
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 					@ReadCharParameterList
 				    | *:
 					@ReadNonCharParameterList
@@ -3071,9 +3072,9 @@ ReadNonCharParameterList :
 
 ReadChar :
 	[ oTypeStkChooseKind
-	    | tpString:
+	    | tpChar:
 		.tTrap
-		oEmitTrapKind(trReadString)
+		oEmitTrapKind(trReadChar)
 	    | tpInteger, tpSubrange:
 		.tTrap
 		oEmitTrapKind(trReadInteger)
@@ -3150,7 +3151,7 @@ ReadlnProcedure :
 				oTypeStkPushComponent
 				% readln applies only to text files
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 					% There should not be more parameters
 					[
 					    | sExpnEnd:

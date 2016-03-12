@@ -322,6 +322,8 @@
 	syExternal = 6;
 	syExpression = 7;
 	syUndefined = 8;
+	syClass = 9;
+	syPublicProcedure = 10;
 	{ Type 18 }
 	rtReset = 1;
 	rtRewrite = 2;
@@ -341,7 +343,7 @@
 	stdNull = 2;
 	{ Type 20 }
 	tpInteger = 0;
-	tpChar = 1;
+	tpString = 1;
 	tpBoolean = 2;
 	tpSubrange = 3;
 	tpArray = 4;
