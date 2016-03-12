@@ -1260,6 +1260,16 @@ SubrangeUpperBound :
 	    | *:
 	];
 
+%VariableDeclarations :
+	%oCountPush(zero)
+	%{[
+	%    | sIdentifier:
+%		oCountIncrement
+%	    | *:
+	%	>
+%	]};	
+
+
 VariableDeclarations :
 	{[
 	    | sIdentifier:
@@ -1593,7 +1603,7 @@ Statement :
 	    % | sRepeatStmt:
 		% @RepeatStmt
 	    | sNullStmt:
-	];syProcedure
+	];
 
 AssignmentStmt :
 	% Assignment is permitted to scalar variables only.

@@ -1,5 +1,5 @@
 program Hello (output)
 {
-	function goodbye() {
+	loop {
 	}
 }

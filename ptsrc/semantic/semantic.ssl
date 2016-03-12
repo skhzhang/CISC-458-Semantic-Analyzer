@@ -1260,6 +1260,16 @@ SubrangeUpperBound :
 	    | *:
 	];
 
+%VariableDeclarations :
+	%oCountPush(zero)
+	%{[
+	%    | sIdentifier:
+%		oCountIncrement
+%	    | *:
+	%	>
+%	]};	
+
+
 VariableDeclarations :
 	{[
 	    | sIdentifier:
@@ -1592,6 +1602,8 @@ Statement :
 		@CaseStmt
 	    % | sRepeatStmt:
 		% @RepeatStmt
+	    | sLoopStmt:
+		@LoopStmt
 	    | sNullStmt:
 	];
 
@@ -1803,6 +1815,50 @@ IfStmt :
 	oFixPopForwardBranch;
 
 % removed while and repeat statement rules
+% WhileStmt :
+%        .tWhileBegin
+%        oFixPushTargetAddress           % top-of-loop branch target
+%        @BooleanControlExpression
+%        .tWhileTest
+%        oFixPushForwardBranch
+%        oEmitNullAddress                % exit branch
+%        oFixSwap                % top-of-loop target back on top
+%        @Statement
+%        .tWhileEnd
+%        oFixPopTargetAddress
+%        oFixPopForwardBranch;
+%
+%RepeatStmt :
+%        .tRepeatBegin
+%        oFixPushTargetAddress           % top-of-loop branch target
+%	{[
+%            | sRepeatEnd:
+%                >
+%            | *:
+%                @Statement
+%        ]}
+%        .tRepeatControl
+%        @BooleanControlExpression
+%        .tRepeatTest
+%        oFixPopTargetAddress;
+
+% added loop statement rule
+LoopStmt :
+	.tLoopBegin
+	@Statement % allow statement before condition
+	sLoopBreakWhen
+	.tLoopBreakWhen
+	oFixPushTargetAddress           % top-of-loop branch target
+	@BooleanControlExpression
+	.tLoopTest
+	oFixPushForwardBranch
+	oEmitNullAddress                % exit branch
+	oFixSwap                % top-of-loop target back on top
+	@Statement
+	sLoopEnd
+	.tLoopEnd
+	oFixPopTargetAddress
+	oFixPopForwardBranch;
 
 CaseStmt :
 	.tCaseBegin
@@ -3199,7 +3255,7 @@ CaseSelectorExpression :
 	oTypeStkPop;
 
 BooleanControlExpression :
-	% Boolean control expressions occur in IF, WHILE and REPEAT statements.
+	% Boolean control expressions occur in IF and LOOP statements.
 
 	@Expression
 	[ oTypeStkChooseKind
