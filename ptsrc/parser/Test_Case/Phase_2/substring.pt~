@@ -1,8 +1,0 @@
-{ This program tests the substring operator. This is placed in an expression inside an if condition. }
-
-program P (output)
-{
-	if ("hello there" @ 1:5 == "hello") {
-		
-	}
-}

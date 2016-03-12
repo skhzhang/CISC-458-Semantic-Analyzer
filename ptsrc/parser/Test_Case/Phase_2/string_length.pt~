@@ -1,8 +1,0 @@
-{ This program tests the string length operator. This is placed in an expression inside an if condition. }
-
-program P (output)
-{
-	if (#"four" == 4) {
-		
-	}
-}

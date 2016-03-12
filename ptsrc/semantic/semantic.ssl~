@@ -27,6 +27,9 @@ Input :
 	sType
 	sVar
 	sProcedure
+%%%%%%%%%%% ADDED 
+	sPublic
+%%%%%%%%%%% 
 	sBegin
 	sEnd
 	sNegate
@@ -35,6 +38,9 @@ Input :
 	sFile
 	sRange
 	sCaseStmt
+%%%%%%%%%%% ADDED 
+	sDefault
+%%%%%%%%%%% 
 	sCaseEnd
 	sLabelEnd
 	sExpnEnd
@@ -44,12 +50,20 @@ Input :
 	sCallStmt
 	sFieldWidth
 	sIfStmt
-	sElsif % added new semantic token to represent the elsif statement
+	%sElsif % This has been commented out due to that we are using the parser solution from Phase 2
+		% Which has a different way to implement else if.
 	sThen
 	sElse
 	% sWhileStmt % removal of old token
 	% sRepeatStmt % removal of old token
 	% sRepeatEnd % removal of old token
+%%%%%%%%%%% 
+	sClass
+	sLoopStmt
+	sLoopBreakWhen
+	sLoopEnd
+	sReturn % added here to sync with answer from phase 2
+%%%%%%%%%%% 
 	sEq
 	sNE
 	sLT
@@ -66,18 +80,11 @@ Input :
 	sInfixAnd
 	sAnd
 	sNot
-	sNewLine
-
-	% new semantic tokens
-	sPublic
-	sDefault
-	sClass
-	sLoopStmt
-	sLoopBreakWhen
-	sLoopEnd
+%%%%%%%%%%% 
 	sSubstring
 	sLength
-
+%%%%%%%%%%% 
+	sNewLine
 	sEndOfFile
 	lastInputToken = sEndOfFile;
 
@@ -183,6 +190,7 @@ Output : 	% corresponds to coder.ssl input
 Error :
 	eDuplicateName 
 	firstErrorCode = eDuplicateName
+
 	eMultiplyDefined
 	eUndefinedIdentifier
 	eConstantReqd
@@ -233,7 +241,7 @@ type Integer :
 	% These two sizes are machine dependent
 	byteSize = 1
 	wordSize = 4
-	stringSize = 1024; % add stringSize to Integer definition
+	stringSize = 1024;
 
 
 type Boolean :
@@ -250,7 +258,7 @@ type PredeclaredId :
 
 	firstPredeclaredType = firstPredeclaredId
 	pidInteger = firstPredeclaredType
-	pidChar
+	pidString
 	pidBoolean
 	pidText
 	lastPredeclaredType = pidText
@@ -278,7 +286,7 @@ type PredeclaredId :
 
 type StdType :
 	stdInteger
-	stdString % changed from stdChar to stdString
+	stdString
 	stdBoolean
 	stdText;
 
@@ -313,19 +321,18 @@ mechanism SymbolTable :
 	% the scope being exited, except for formal parameters
 	% which must be retained for type checking.
 
-    oSymbolTblLookupExternal >> Boolean
+    oSymbolTblStripScope
+	% For all non-public procedures, hide them away when they're done
+	% by strip one scope level away from them.
+
+    oSymbolTblMergeScope
+	% Reduce the lexical level of a entry in Symbol Table
+
+    oSymbolTblLookupExternal >> Boolean;
 	% Return true if any external names (program parameters)
 	% have not yet been declared.
 
-    oSymbolTblStripScope % new semantic operation
-	% Go through the top scope in symbol table setting the
-	% symbol table reference for each symbol's identifier index 
-	% to the one at the next lower lexical level
 
-    oSymbolTblMergeScope; % new semantic operation
-	% Merge the top two scopes in the symbol table by
-	% decrementing the lexical level but not changing the
-	% symbol table top
 
 
 
@@ -341,9 +348,7 @@ type SymbolKind :
 	syFunction
 	syExternal
 	syExpression
-	syUndefined
-	syClass % add syClass to SymbolKind
-	syPublicProcedure; % add syPublicProcedure to SymbolKind
+	syUndefined;
 
 type StdRoutine :
 	rtReset = 1
@@ -473,7 +478,7 @@ mechanism TypeTable :
 
 type TypeKind :
 	tpInteger
-	tpString % change from tpKind to tpString
+	tpChar
 	tpBoolean
 	tpSubrange
 	tpArray
@@ -976,19 +981,6 @@ ConstantValue :		% An identifier token has just been accepted
 	oSymbolTblEnter
 	oSymbolStkPop;		% name being defined
 
-
-% added new rule to handle class definitions
-% should push the variables in the class scope onto the symbol table, then promote only the variables that are public to the enclosing scope (1 lower lexical level), then decrement the lexical  level while keeping the symbol tables at the top when the class definition completes
-ClassDefinition: 
-	sClass
-	oSymbolTblPushScope
-
-	@Block
-
-	oSymbolTblStripScope
-	oSymbolTblMergeScope;
-
-
 TypeDefinitions :	% process named type definitions
 	{[
 	    | sIdentifier:
@@ -1379,7 +1371,7 @@ AllocateVar :
 			oAllocateAlignOnWord
 			oSymbolStkEnterDataAddress
 			oAllocateVariable
-		    | tpString, tpBoolean:
+		    | tpChar, tpBoolean:
 			oSymbolStkEnterDataAddress
 			oAllocateVariable
 		    | tpArray:
@@ -1553,7 +1545,7 @@ ProcedurePrologue :
 			[ oTypeStkChooseKind
 			    | tpInteger, tpSubrange:
 				.tStoreParmInteger
-			    | tpString:
+			    | tpChar:
 				.tStoreParmString
 			    | tpBoolean:
 				.tStoreParmBoolean
@@ -1613,7 +1605,7 @@ AssignmentStmt :
 	[ oTypeStkChooseKind
 	    | tpInteger, tpSubrange, tpFile:
 		.tAssignInteger
-	    | tpString:
+	    | tpChar:
 		.tAssignString
 	    | tpBoolean:
 		.tAssignBoolean
@@ -1750,7 +1742,7 @@ VariableActual :
 			#eParameterTypeMismatch
 		]
 		[ oTypeStkChooseKind
-		    | tpInteger, tpSubrange, tpString, tpBoolean:
+		    | tpInteger, tpSubrange, tpChar, tpBoolean:
 			% Subscripted packed array variables are
 			% illegal as variable actual parameters
 			[ oTypeStkChoosePackedComponentFlag
@@ -1942,10 +1934,10 @@ Operand :
 		    | zero:
 			#eNullString
 			oSymbolStkPush(syExpression)
-			oTypeStkPush(tpString)
+			oTypeStkPush(tpChar)
 		    | one:
 			oSymbolStkPush(syExpression)
-			oTypeStkPush(tpString)
+			oTypeStkPush(tpChar)
 			.tLiteralString
 			oEmitString
 		    | *:
@@ -2065,10 +2057,10 @@ CompareAndSwapTypes :
 		    | *:
 			#eTypeMismatch
 		]
-	    | tpString:
+	    | tpChar:
 		oTypeStkSwap
 		[ oTypeStkChooseKind
-		    | tpString:
+		    | tpChar:
 		    | *:
 			#eTypeMismatch
 		]
@@ -2129,10 +2121,10 @@ CompareRelationalOperandTypes :
 		    | *:
 			#eOperandOperatorTypeMismatch
 		]
-	    | tpString:
+	    | tpChar:
 		oTypeStkPop
 		[ oTypeStkChooseKind
-		    | tpString:
+		    | tpChar:
 		    | *:
 			#eOperandOperatorTypeMismatch
 		]
@@ -2207,14 +2199,14 @@ VariableExtension :
 		[ oTypeStkChooseKind
 		    | tpInteger, tpSubrange:
 			.tSubscriptInteger
-		    | tpString:
+		    | tpChar:
 			.tSubscriptString
 		    | tpBoolean:
 			.tSubscriptBoolean
 		]
 	    | *:
 		[ oTypeStkChooseKind
-		    | tpInteger, tpSubrange, tpString, tpBoolean:
+		    | tpInteger, tpSubrange, tpChar, tpBoolean:
 			oTypeStkSetPackedComponentFlag(no)
 		    | *:
 		]
@@ -2227,7 +2219,7 @@ ConstantOperand :
 	[ oTypeStkChooseKind
 	    | tpInteger, tpSubrange:
 		.tLiteralInteger
-	    | tpString:
+	    | tpChar:
 		.tLiteralString
 	    | tpBoolean:
 		.tLiteralBoolean
@@ -2246,7 +2238,7 @@ VariableOperand :
 	[ oTypeStkChooseKind
 	    | tpInteger, tpSubrange, tpFile:
 		.tFetchInteger		% replace address with value
-	    | tpString:
+	    | tpChar:
 		.tFetchString
 	    | tpBoolean:
 		.tFetchBoolean
@@ -2282,13 +2274,13 @@ FunctionOperand :
 		oSymbolStkPop	% Chr symbol
 		oTypeStkPop
 		oSymbolStkPush(syExpression)
-		oTypeStkPush(tpString)
+		oTypeStkPush(tpChar)
 	    | rtOrd:
 		[
 		    | sParmBegin:
 			@Expression
 			[ oTypeStkChooseKind
-			    | tpString:
+			    | tpChar:
 			    | *:
 				#eCharExpnReqd
 			]
@@ -2482,7 +2474,7 @@ AssignProcedure :
 			    | tpArray, tpPackedArray:	% must be a char array or literal string	
 				oTypeStkPushComponent
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 				    | *:
 					#eFileNameReqd
 				]
@@ -2545,7 +2537,7 @@ WriteProcedure :
 				oTypeStkPushComponent
 				oValuePushSymbol	% file descriptor
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 					{
 					    .tTrapBegin
 					    .tLiteralAddress
@@ -2732,7 +2724,7 @@ WriteChar :
 		[ oTypeStkChooseKind	% of expression being written
 		    | tpInteger, tpSubrange:
 			oValuePush(ten)
-		    | tpString:
+		    | tpChar:
 			oValuePush(one)
 		    | tpPackedArray:	% a literal string
 			oValuePushTypeStkUpperBound
@@ -2745,7 +2737,7 @@ WriteChar :
 		.tParmEnd
 	]
 	[ oTypeStkChooseKind
-	    | tpString:
+	    | tpChar:
 		.tTrap
 		oEmitTrapKind(trWriteChar)
 	    | tpInteger, tpSubrange:
@@ -2754,7 +2746,7 @@ WriteChar :
 	    | tpArray, tpPackedArray:	% must be a char array or literal string
 		oTypeStkPushComponent
 		[ oTypeStkChooseKind
-		    | tpString:
+		    | tpChar:
 		    | *:
 			#eWriteExpn
 		]
@@ -2855,7 +2847,7 @@ WritelnProcedure :
 				oTypeStkPushComponent
 				% writeln applies only to text files
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 					% There should not be more parameters
 					[
 					    | sExpnEnd:
@@ -2923,7 +2915,7 @@ ReadProcedure :
 				oValuePushSymbol	% file descriptor
 				oTypeStkPushComponent
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 					@ReadCharParameterList
 				    | *:
 					@ReadNonCharParameterList
@@ -3064,7 +3056,7 @@ ReadNonCharParameterList :
 
 ReadChar :
 	[ oTypeStkChooseKind
-	    | tpString:
+	    | tpChar:
 		.tTrap
 		oEmitTrapKind(trReadChar)
 	    | tpInteger, tpSubrange:
@@ -3143,7 +3135,7 @@ ReadlnProcedure :
 				oTypeStkPushComponent
 				% readln applies only to text files
 				[ oTypeStkChooseKind
-				    | tpString:
+				    | tpChar:
 					% There should not be more parameters
 					[
 					    | sExpnEnd:

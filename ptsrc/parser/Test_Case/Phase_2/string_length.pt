@@ -1,6 +1,0 @@
-program P (output)
-{
-	if (#"four" == 4) {
-		
-	}
-}

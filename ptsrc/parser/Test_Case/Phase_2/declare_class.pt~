@@ -1,8 +1,0 @@
-{ This program tries to declare a class. It's the last part of declaration}
-
-program P (output) 
-{
-	class c 
-	{
-	}
-}

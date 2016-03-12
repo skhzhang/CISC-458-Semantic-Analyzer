@@ -1,6 +1,0 @@
-{ This program tries to declare a constant. This makes up part of the declaration of the program }
-
-program P (output) 
-{
-	let c = 27;
-}

@@ -1,7 +1,0 @@
-{ This program tries to declare some variables using two ways. This makes up part of the declaration of the program }
-
-program P (output) 
-{
-	var v : integer;
-	var a , b, c : integer;
-}

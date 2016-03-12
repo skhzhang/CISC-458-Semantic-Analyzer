@@ -1,4 +1,0 @@
-program P (output) 
-{
-	let c = 27;
-}

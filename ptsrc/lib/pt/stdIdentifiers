@@ -11,29 +11,39 @@ mod
 or
 and
 not
-% removed then
+%%%%%%%%%% DELETED
+% then
+%%%%%%%%%%
 else
 of
-% removed end
-% removed until
-% removed do
+%%%%%%%%%% DELETED
+% end
+% until
+% do
+%%%%%%%%%%
 array
 file
 packed
 program
-% removed const
+%%%%%%%%%% CHANGED
+% const
+%%%%%%%%%%
+let
+%%%%%%%%%%
 var
 type
-% removed procedure
-% removed begin
+%%%%%%%%%% CHANGED
+% procedure
+% begin
+%%%%%%%%%%
+function
+%%%%%%%%%%
 if
 case
-% removed while
-% removed repeat
-
-% new keywords
-let
-function
+%%%%%%%%%% CHANGED
+% while
+% repeat
+%%%%%%%%%%
 switch
 default
 elsif
@@ -42,6 +52,8 @@ break
 when
 class
 public
+return
+%%%%%%%%%%
 
 % End of keywords
 
@@ -51,7 +63,11 @@ public
 
 % Predeclared type names
 integer
-string % changed char
+%%%%%%%%%% CHANGED
+% char
+%%%%%%%%%%
+string
+%%%%%%%%%%
 boolean
 text
 

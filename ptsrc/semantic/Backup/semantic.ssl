@@ -258,7 +258,7 @@ type PredeclaredId :
 
 	firstPredeclaredType = firstPredeclaredId
 	pidInteger = firstPredeclaredType
-	pidString
+	pidChar
 	pidBoolean
 	pidText
 	lastPredeclaredType = pidText
@@ -286,7 +286,7 @@ type PredeclaredId :
 
 type StdType :
 	stdInteger
-	stdString
+	stdChar
 	stdBoolean
 	stdText;
 
@@ -320,13 +320,6 @@ mechanism SymbolTable :
 	% and associated type table entries for names local to
 	% the scope being exited, except for formal parameters
 	% which must be retained for type checking.
-
-    oSymbolTblStripScope
-	% For all non-public procedures, hide them away when they're done
-	% by strip one scope level away from them.
-
-    oSymbolTblMergeScope
-	% Reduce the lexical level of a entry in Symbol Table
 
     oSymbolTblLookupExternal >> Boolean;
 	% Return true if any external names (program parameters)
@@ -953,7 +946,7 @@ ConstantValue :		% An identifier token has just been accepted
 			#eNullString
 			@SymbolStkPushCharConstant
 		    | one:
-			oSymbolStkLinkToStandardType(stdString)
+			oSymbolStkLinkToStandardType(stdChar)
 			oSymbolStkEnterStringValue
 		    | *:
 			% Emit a branch around the string since
@@ -970,7 +963,7 @@ ConstantValue :		% An identifier token has just been accepted
 			oFixPopForwardBranch
 			oTypeStkPush(tpPackedArray)	% means literal string
 			oTypeStkEnterBounds
-			oTypeStkLinkToStandardComponentType(stdString)
+			oTypeStkLinkToStandardComponentType(stdChar)
 			oTypeTblEnter
 			oSymbolStkEnterTypeReference
 			oTypeStkPop
@@ -1959,7 +1952,7 @@ Operand :
 			oFixPopTargetAddress
 			oTypeStkPush(tpPackedArray)
 			oTypeStkEnterBounds
-			oTypeStkLinkToStandardComponentType(stdString)
+			oTypeStkLinkToStandardComponentType(stdChar)
 		]
 		oValuePop
 		oValuePop
@@ -3225,7 +3218,7 @@ SymbolStkPushCharConstant :
 	oValuePush(zero)
 	oSymbolStkEnterValue
 	oValuePop
-	oSymbolStkLinkToStandardType(stdString);
+	oSymbolStkLinkToStandardType(stdChar);
 
 
 SymbolStkPushIntegerType :

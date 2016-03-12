@@ -1,6 +1,0 @@
-{ test the simple case of running an empty program with one parameter and empty body }
-{ aim to test the program section }
-
-program P (output) 
-{
-}

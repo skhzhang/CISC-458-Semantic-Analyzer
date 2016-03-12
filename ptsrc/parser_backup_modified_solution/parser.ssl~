@@ -74,14 +74,14 @@ Input :
 	pPublic		'public'
 %%%%%%%%%%% 
 %%%%%%%%%%% ADDED 858
-	pReturn		'return'
+%	pReturn		'return'
 %%%%%%%%%%% 
 %%%%%%%%%%% CHANGED 458
 %	lastKeywordToken = pRepeat
 %%%%%%%%%%% CHANGED 858
-%	lastKeywordToken = pPublic
+	lastKeywordToken = pPublic
 %%%%%%%%%%% 
-	lastKeywordToken = pReturn
+%	lastKeywordToken = pReturn
 %%%%%%%%%%% 
 
 	pIdentifier 
@@ -171,9 +171,6 @@ Output :
 	sLoopStmt
 	sLoopBreakWhen
 	sLoopEnd
-%%%%%%%%%%% 
-%%%%%%%%%%% ADDED 858 
-	sReturn
 %%%%%%%%%%% 
 	sEq
 	sNE
@@ -281,13 +278,6 @@ Declarations:
 		@ProcedureHeading
 		'{'
 		    @Block  
-%%%%%%%%%%% ADDED 858 
-		    [
-			| 'return':
-			    .sReturn '(' @Expression .sExpnEnd ')' ';' 
-			| *:
-		    ]
-%%%%%%%%%%% END 858 
 		'}'
 	    | 'function':
 		.sProcedure
@@ -296,13 +286,6 @@ Declarations:
 		@ProcedureHeading
 		'{'
 		    @Block  
-%%%%%%%%%%% ADDED 858 
-		    [
-			| 'return':
-			    .sReturn '(' @Expression .sExpnEnd  ')' ';'
-			| *:
-		    ]
-%%%%%%%%%%% END 858 
 		'}'
 	    | 'class':
 		.sClass

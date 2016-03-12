@@ -1,5 +1,0 @@
-program P (output) 
-{
-	var v : integer;
-	var a , b, c : integer;
-}

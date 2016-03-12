@@ -20,7 +20,7 @@ Input :
 	lLetter 
 	firstCharClass = lLetter 
 	lDigit
-	lPlus		'+'
+	lPlus		'+
 	lMinus		'-'
 	lStar		'*'
 	lColon		':'

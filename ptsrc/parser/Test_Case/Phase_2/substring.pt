@@ -1,6 +1,0 @@
-program P (output)
-{
-	if ("hello there" @ 1:5 == "hello") {
-		
-	}
-}
