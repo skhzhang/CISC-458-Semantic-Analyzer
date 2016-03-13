@@ -1260,6 +1260,20 @@ SubrangeUpperBound :
 	    | *:
 	];
 
+%VariableDeclarations :
+%	oCountPush(zero)
+%	{[
+%	    | sIdentifier:
+%		oCountIncrement
+%	    | *:
+%		>
+%	]}
+%	[ oCountChoose
+%	    | zero:
+%	    | *:
+%		@VariableAttributes
+%	];	
+
 VariableDeclarations :
 	{[
 	    | sIdentifier:
@@ -1588,11 +1602,11 @@ Statement :
 		@IfStmt
 	    % | sWhileStmt:
 		% @WhileStmt
-	    | sCaseStmt:
+	    | sCaseStmt: % switch statement handling
 		@CaseStmt
 	    % | sRepeatStmt:
 		% @RepeatStmt
-	    | sLoopStmt: % add loop statement handling
+	    | sLoopStmt: % added loop statement handling
 		@LoopStmt
 	    | sNullStmt:
 	];
@@ -1850,6 +1864,8 @@ LoopStmt :
 	oFixPopTargetAddress
 	oFixPopForwardBranch;
 
+
+% modified for switch statement handling
 CaseStmt :
 	.tCaseBegin
 	@CaseSelectorExpression
@@ -1861,6 +1877,13 @@ CaseStmt :
 	{[
 	    | sCaseEnd:
 		>
+	    | sDefault:
+		@Statement
+		.tCaseMerge
+		oFixPushForwardBranch
+		oEmitNullAddress		% merge branch at end of statement
+		oFixSwap			% keep case select branch on top
+		oCountIncrement
 	    | *:
 		@CaseAlternative
 	]}
@@ -1948,6 +1971,7 @@ Expression :
 	    @Operand
 	    @UnaryOperator
 	    @BinaryOperator
+	   % @TernaryOperator
 	    [
 		| sExpnEnd:
 		    >
@@ -2103,6 +2127,10 @@ BinaryOperator :
 		@CompareOperandAndResultTypes
 	    | *:
 	];
+
+TernaryOperator:
+	% This is added part for ternary operator.
+	;
 
 CompareAndSwapTypes :
 	% Compare the top two type stack entries for assignment

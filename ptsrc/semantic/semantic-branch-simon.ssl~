@@ -1260,6 +1260,20 @@ SubrangeUpperBound :
 	    | *:
 	];
 
+%VariableDeclarations :
+%	oCountPush(zero)
+%	{[
+%	    | sIdentifier:
+%		oCountIncrement
+%	    | *:
+%		>
+%	]}
+%	[ oCountChoose
+%	    | zero:
+%	    | *:
+%		@VariableAttributes
+%	];	
+
 VariableDeclarations :
 	{[
 	    | sIdentifier:
@@ -1588,11 +1602,11 @@ Statement :
 		@IfStmt
 	    % | sWhileStmt:
 		% @WhileStmt
-	    | sCaseStmt:
+	    | sCaseStmt: % switch statement handling
 		@CaseStmt
 	    % | sRepeatStmt:
 		% @RepeatStmt
-	    | sLoopStmt: % add loop statement handling
+	    | sLoopStmt: % added loop statement handling
 		@LoopStmt
 	    | sNullStmt:
 	];
@@ -1836,6 +1850,7 @@ IfStmt :
 LoopStmt :
 	.tLoopBegin
 	@Statement % allow statement before condition
+	sLoopBreakWhen
 	.tLoopBreakWhen
 	oFixPushTargetAddress           % top-of-loop branch target
 	@BooleanControlExpression
@@ -1844,10 +1859,13 @@ LoopStmt :
 	oEmitNullAddress                % exit branch
 	oFixSwap                % top-of-loop target back on top
 	@Statement
+	sLoopEnd
 	.tLoopEnd
 	oFixPopTargetAddress
 	oFixPopForwardBranch;
 
+
+% modified for switch statement handling
 CaseStmt :
 	.tCaseBegin
 	@CaseSelectorExpression
@@ -1863,6 +1881,16 @@ CaseStmt :
 		@CaseAlternative
 	]}
 	.tCaseEnd
+	[
+	    | sDefault:
+		@Statement
+		.tCaseMerge
+		oFixPushForwardBranch
+		oEmitNullAddress		% merge branch at end of statement
+		oFixSwap			% keep case select branch on top
+		oCountIncrement
+	    | *:
+	]
 	oFixPopForwardBranch
 	oEmitCaseBranchTable
 	% emit merge branches for case alternatives
@@ -1946,6 +1974,7 @@ Expression :
 	    @Operand
 	    @UnaryOperator
 	    @BinaryOperator
+	   % @TernaryOperator
 	    [
 		| sExpnEnd:
 		    >
@@ -2101,6 +2130,10 @@ BinaryOperator :
 		@CompareOperandAndResultTypes
 	    | *:
 	];
+
+TernaryOperator:
+	% This is added part for ternary operator.
+	;
 
 CompareAndSwapTypes :
 	% Compare the top two type stack entries for assignment

@@ -1,5 +1,5 @@
 program Hello (output)
 {
-	loop {
+	if (1 == 1){
 	}
 }

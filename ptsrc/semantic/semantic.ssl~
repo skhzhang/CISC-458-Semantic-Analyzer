@@ -1261,14 +1261,18 @@ SubrangeUpperBound :
 	];
 
 %VariableDeclarations :
-	%oCountPush(zero)
-	%{[
-	%    | sIdentifier:
+%	oCountPush(zero)
+%	{[
+%	    | sIdentifier:
 %		oCountIncrement
 %	    | *:
-	%	>
-%	]};	
-
+%		>
+%	]}
+%	[ oCountChoose
+%	    | zero:
+%	    | *:
+%		@VariableAttributes
+%	];	
 
 VariableDeclarations :
 	{[
@@ -1598,10 +1602,12 @@ Statement :
 		@IfStmt
 	    % | sWhileStmt:
 		% @WhileStmt
-	    | sCaseStmt:
+	    | sCaseStmt: % switch statement handling
 		@CaseStmt
 	    % | sRepeatStmt:
 		% @RepeatStmt
+	    | sLoopStmt:
+		@LoopStmt
 	    | sNullStmt:
 	];
 
@@ -1813,6 +1819,50 @@ IfStmt :
 	oFixPopForwardBranch;
 
 % removed while and repeat statement rules
+% WhileStmt :
+%        .tWhileBegin
+%        oFixPushTargetAddress           % top-of-loop branch target
+%        @BooleanControlExpression
+%        .tWhileTest
+%        oFixPushForwardBranch
+%        oEmitNullAddress                % exit branch
+%        oFixSwap                % top-of-loop target back on top
+%        @Statement
+%        .tWhileEnd
+%        oFixPopTargetAddress
+%        oFixPopForwardBranch;
+%
+%RepeatStmt :
+%        .tRepeatBegin
+%        oFixPushTargetAddress           % top-of-loop branch target
+%	{[
+%            | sRepeatEnd:
+%                >
+%            | *:
+%                @Statement
+%        ]}
+%        .tRepeatControl
+%        @BooleanControlExpression
+%        .tRepeatTest
+%        oFixPopTargetAddress;
+
+% added loop statement rule
+LoopStmt :
+	.tLoopBegin
+	@Statement % allow statement before condition
+	sLoopBreakWhen
+	.tLoopBreakWhen
+	oFixPushTargetAddress           % top-of-loop branch target
+	@BooleanControlExpression
+	.tLoopTest
+	oFixPushForwardBranch
+	oEmitNullAddress                % exit branch
+	oFixSwap                % top-of-loop target back on top
+	@Statement
+	sLoopEnd
+	.tLoopEnd
+	oFixPopTargetAddress
+	oFixPopForwardBranch;
 
 CaseStmt :
 	.tCaseBegin
@@ -1825,6 +1875,13 @@ CaseStmt :
 	{[
 	    | sCaseEnd:
 		>
+	    | sDefault:
+		@Statement
+		.tCaseMerge
+		oFixPushForwardBranch
+		oEmitNullAddress		% merge branch at end of statement
+		oFixSwap			% keep case select branch on top
+		oCountIncrement
 	    | *:
 		@CaseAlternative
 	]}
@@ -1912,6 +1969,7 @@ Expression :
 	    @Operand
 	    @UnaryOperator
 	    @BinaryOperator
+	   % @TernaryOperator
 	    [
 		| sExpnEnd:
 		    >
@@ -1996,6 +2054,16 @@ Operand :
 
 UnaryOperator :
 	[
+%%%%%%%%%%%% ADDED Line Here
+	    | sLength:
+		[ oTypeStkChooseKind
+		    | tpString, tpPackedArray:
+			.tLength
+			oTypeStkPush(tpInteger)
+		    | *:
+			#eTypeMismatch
+		]
+%%%%%%%%%%%% END Here
 	    | sNegate:
 		.tNegate
 		oTypeStkPush(tpInteger)	% result type
@@ -2016,6 +2084,22 @@ BinaryOperator :
 	% but that would probably be less efficient on average.
 	[
 	    | sAdd:
+%		[ oTypeStkChooseKind
+%		    | tpString, tpInteger:
+%			oTypeStkSwap
+%			[ oTypeStkChooseKind
+%			    | tpString:
+%				.tConcatenate
+%				oTypeStkPush(tpString)	% result type
+%				@CompareOperandAndResultTypes
+%			    | tpInteger:
+%				.tAdd
+%				oTypeStkPush(tpInteger)	% result type
+%				@CompareOperandAndResultTypes
+%			]
+%		    | *:
+%			#eTypeMismatch
+%		]
 		.tAdd
 		oTypeStkPush(tpInteger)	% result type
 		@CompareOperandAndResultTypes
@@ -2067,6 +2151,10 @@ BinaryOperator :
 		@CompareOperandAndResultTypes
 	    | *:
 	];
+
+TernaryOperator:
+	% This is added part for ternary operator.
+	;
 
 CompareAndSwapTypes :
 	% Compare the top two type stack entries for assignment
@@ -3209,7 +3297,7 @@ CaseSelectorExpression :
 	oTypeStkPop;
 
 BooleanControlExpression :
-	% Boolean control expressions occur in IF, WHILE and REPEAT statements.
+	% Boolean control expressions occur in IF and LOOP statements.
 
 	@Expression
 	[ oTypeStkChooseKind
