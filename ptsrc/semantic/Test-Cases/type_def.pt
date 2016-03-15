@@ -1,0 +1,4 @@
+program Hello (output)
+{
+	type a : integer, b : integer;
+}

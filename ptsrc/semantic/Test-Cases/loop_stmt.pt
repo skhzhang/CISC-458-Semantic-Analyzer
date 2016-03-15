@@ -1,0 +1,8 @@
+program Hello (output)
+{
+	var a : integer;
+	loop {
+		a = 1;
+		break when (a == 1);
+	}
+}

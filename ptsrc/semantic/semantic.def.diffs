@@ -1,7 +1,15 @@
-d361
-c363
-	trWriteString = 108;
-.
-c365
-	trReadString = 107;
+c69 82
+	oCasePushLabel = 81;
+	oCountPush = 82; { (13) }
+	oCountPushValue = 83;
+	oCountPop = 84;
+	oCountIncrement = 85;
+	oCountDecrement = 86;
+	oCountChoose = 87; { >>13 }
+	oFixPushForwardBranch = 88;
+	oFixPopForwardBranch = 89;
+	oFixPushTargetAddress = 90;
+	oFixPopTargetAddress = 91;
+	oFixPopAndEnterValue = 92;
+	oFixSwap = 93;
 .

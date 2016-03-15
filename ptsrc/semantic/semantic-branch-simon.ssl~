@@ -1877,11 +1877,6 @@ CaseStmt :
 	{[
 	    | sCaseEnd:
 		>
-	    | *:
-		@CaseAlternative
-	]}
-	.tCaseEnd
-	[
 	    | sDefault:
 		@Statement
 		.tCaseMerge
@@ -1890,7 +1885,9 @@ CaseStmt :
 		oFixSwap			% keep case select branch on top
 		oCountIncrement
 	    | *:
-	]
+		@CaseAlternative
+	]}
+	.tCaseEnd
 	oFixPopForwardBranch
 	oEmitCaseBranchTable
 	% emit merge branches for case alternatives

@@ -1,4 +1,5 @@
 program Hello (output)
 {
-	var a, b, c: integer;
+	if (#"Jim" == 3){
+	}
 }

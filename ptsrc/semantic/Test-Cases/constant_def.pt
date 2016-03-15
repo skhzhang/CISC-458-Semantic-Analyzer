@@ -1,4 +1,4 @@
 program Hello (output)
 {
-	var a, b, c: integer;
+	let a = 12, b = 14;
 }

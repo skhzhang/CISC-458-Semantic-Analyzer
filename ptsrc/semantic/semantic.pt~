@@ -1903,7 +1903,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			  is the value of the top count stack entry. }
 			begin
 			    Assert((symbolStkKind[symbolStkTop] =
-				syProcedure) (symbolStkKind[symbolStkTop] = syPublicProcedure), assert24);
+				syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure), assert24);
 			    SymbolStkPushIdentifier(symbolStkSymbolTblRef
 				[symbolStkTop] + countStack[countStackTop]);
 			end;
@@ -1982,7 +1982,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			  defined routines by their negative value fields }
 			begin
 			    Assert((symbolStkKind[symbolStkTop] = syProcedure) or
-				   (symbolStkKind[symbolStkTop] = syFunction),
+				   (symbolStkKind[symbolStkTop] = syFunction) or (symbolStkKind[symbolStkTop] = syPublicProcedure),
 					assert27);
 			    if symbolStkValue[symbolStkTop] < 0 then
 				resultValue := -symbolStkValue[symbolStkTop]
@@ -2136,7 +2136,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			{ Return yes if the parameter count field matches
 			  the top count, otherwise return no.		 }
 			begin
-			    Assert((symbolStkKind[symbolStkTop] = syProcedure),
+			    Assert((symbolStkKind[symbolStkTop] = syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure),
 				assert29);
 			    if typeStkLowerBound[typeStkTop] =
 				    countStack[countStackTop] then

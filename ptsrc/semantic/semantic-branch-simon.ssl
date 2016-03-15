@@ -2029,7 +2029,7 @@ Operand :
 			oSymbolStkPush(syExpression)
 			% branch around string since
 			% it is stored in the code area
-			.tSkipString
+% remove, not needed for JT			.tSkipString
 			oFixPushForwardBranch
 			oEmitNullAddress
 			.tLiteralString
@@ -2040,7 +2040,7 @@ Operand :
 			oFixPopForwardBranch
 			% Descriptor points to the
 			% first character of the string
-			.tStringDescriptor
+% remove, not needed for JT			.tStringDescriptor
 			oFixPopTargetAddress
 			oTypeStkPush(tpPackedArray)
 			oTypeStkEnterBounds
