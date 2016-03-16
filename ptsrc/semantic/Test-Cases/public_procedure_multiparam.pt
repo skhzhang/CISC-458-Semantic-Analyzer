@@ -1,5 +1,0 @@
-program Hello (output)
-{
-	public function sayhi (a : integer, b : integer) {
-	}
-}

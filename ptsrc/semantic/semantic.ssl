@@ -154,8 +154,8 @@ Output : 	% corresponds to coder.ssl input
 	% removed tLiteralChar token
 	tLiteralBoolean
 	tLiteralString
-	tStringDescriptor
-	tSkipString
+	% tStringDescriptor % removed token, not required for JT
+	% tSkipString % removed token, not required for JT
 	tIfThen
 	tIfMerge
 	tCaseSelect
@@ -321,11 +321,11 @@ mechanism SymbolTable :
 	% the scope being exited, except for formal parameters
 	% which must be retained for type checking.
 
-    oSymbolTblStripScope
+    oSymbolTblStripScope % new semantic operation
 	% For all non-public procedures, hide them away when they're done
 	% by strip one scope level away from them.
 
-    oSymbolTblMergeScope
+    oSymbolTblMergeScope % new semantic operation
 	% Reduce the lexical level of a entry in Symbol Table
 
     oSymbolTblLookupExternal >> Boolean;
@@ -349,9 +349,8 @@ type SymbolKind :
 	syExternal
 	syExpression
 	syUndefined
-%%%%%%%%%% Added
-	syClass	
-	syPublicProcedure;
+	syClass	% new
+	syPublicProcedure; % new
 
 type StdRoutine :
 	rtReset = 1
@@ -481,7 +480,7 @@ mechanism TypeTable :
 
 type TypeKind :
 	tpInteger
-	tpString
+	tpString % changed from tpChar to tpString
 	tpBoolean
 	tpSubrange
 	tpArray
@@ -872,6 +871,8 @@ Block :
 	{[
 	    | sProcedure:
 		@ProcedureDefinition
+	    | sClass: % added handling of class definition token which leads to appropriate rule
+		@ClassDefinition
 	    | sConst:
 		@ConstantDefinitions
 	    | sType:
@@ -951,37 +952,52 @@ ConstantValue :		% An identifier token has just been accepted
 		oSymbolStkEnterValue
 		oValuePop
 	    | sLiteral:
-		oValuePush(one)	% implicit lower bound of string index type
-		oValuePushStringLength
-		[ oValueChoose
-		    | zero:
-			#eNullString
-			@SymbolStkPushCharConstant
-		    | one:
-			oSymbolStkLinkToStandardType(stdString)
-			oSymbolStkEnterStringValue
-		    | *:
+		.tAssignBegin
+		@Variable
+		[ oTypeStkChooseKind
+	    	    | tpArray:
+			#eScalarReqd
+			% No error repair since error is confined to this rule
+	    	    | *:
+		]
+
+		%@Expression	% Push symbol and type stack entries for an expression
+		%@CompareAndSwapTypes
+		.tAssignString
+		oTypeStkPop
+
+% removed old string handling
+%		oValuePush(one)	% implicit lower bound of string index type
+%		oValuePushStringLength
+%		[ oValueChoose
+%		    | zero:
+%			#eNullString
+%			@SymbolStkPushCharConstant
+%		    | one:
+%			oSymbolStkLinkToStandardType(stdString)
+%			oSymbolStkEnterStringValue
+%		    | *:
 			% Emit a branch around the string since
 			% it is stored in the code area
 % removed no longer needed			.tSkipString
-			oFixPushForwardBranch
-			oEmitNullAddress
-			.tLiteralString
-			oEmitValue	% string length
+%			oFixPushForwardBranch
+%			oEmitNullAddress
+%			.tLiteralString
+%			oEmitValue	% string length
 			% The string "address" is the location (offset)
 			% of the first character of the string
-			oSymbolStkEnterCodeAddress
-			oEmitString
-			oFixPopForwardBranch
-			oTypeStkPush(tpString)	% means literal string
-			oTypeStkEnterBounds
-			oTypeStkLinkToStandardComponentType(stdString)
-			oTypeTblEnter
-			oSymbolStkEnterTypeReference
-			oTypeStkPop
-		]
-		oValuePop	% Upper bound
-		oValuePop	% Lower bound
+%			oSymbolStkEnterCodeAddress
+%			oEmitString
+%			oFixPopForwardBranch
+%			oTypeStkPush(tpString)	% means literal string
+%			oTypeStkEnterBounds
+%			oTypeStkLinkToStandardComponentType(stdString)
+%			oTypeTblEnter
+%			oSymbolStkEnterTypeReference
+%			oTypeStkPop
+%		]
+%		oValuePop	% Upper bound
+%		oValuePop	% Lower bound
 	]
 	oSymbolTblEnter
 	oSymbolStkPop;		% name being defined
@@ -1260,142 +1276,142 @@ SubrangeUpperBound :
 	    | *:
 	];
 
-%VariableDeclarations :
-%	oCountPush(zero)
-%	sIdentifer
-%	oSymbolStkPushLocalIdentifier
-%	[oSymbolStkChooseKind
-%	    | syUndefine| syUndefined, syExternal:
-%           | *:
-%               #eMultiplyDefined
+VariableDeclarations :
+	oCountPush(zero)
+	sIdentifier
+	oCountIncrement
+	oSymbolStkPushLocalIdentifier
+	[oSymbolStkChooseKind
+	   | syUndefined, syExternal:
+           | *:
+               #eMultiplyDefined
                 % The new definition will obscure the old one
-%	]
+	]
 
-%	{[ 
-%	    | sVar:
-%		sIdentifer
-%		oCountIncrement
-%		oSymbolStkPushLocalIdentifer
-%		[oSymbolStkChooseKind
-%          		| syUndefine| syUndefined, syExternal:
-%          		| *:
-%                		#eMultiplyDefined
-               		% The new definition will obscure the old one
-%	    | *:       
-%	]
+	{[ 
+	    | sVar:
+		sIdentifier
+		oCountIncrement
+		oSymbolStkPushLocalIdentifier
+		[ oSymbolStkChooseKind
+          		| syUndefined, syExternal:
+          		| *:
+                		#eMultiplyDefined
+				% The new definition will obscure the old one
+		]
+	    | *:       
+		>
+	]}
+	@VariableAttributes
+	oCountPop;
+
+%VariableDeclarations :
+%	{[
+%	    | sIdentifier:
+%		@VariableAttributes
 %	    | *:
 %		>
-%	]}
-%	@VariableAttribute
-%	oCountDecrement; % this is incorrect here	
-
-VariableDeclarations :
-	{[
-	    | sIdentifier:
-		@VariableAttributes
-	    | *:
-		>
-	]};
+%	]};
 
 VariableAttributes :
-	oSymbolStkPushLocalIdentifier
-	[ oSymbolStkChooseKind
-	    | syUndefined, syExternal:
-	    | *:
-		#eMultiplyDefined
+%	oSymbolStkPushLocalIdentifier
+%	[ oSymbolStkChooseKind
+%	    | syUndefined, syExternal:
+%	    | *:
+%		#eMultiplyDefined
 		% The new definition will obscure the old one
-	]
+%	]
 	% Push the variable's structure and
 	% component types onto the type stack
 	@TypeBody
 %%%%%%%%%%%%%%% ADDED HERE
-%	{[ oCountChoose
-%	    | zero:
-%		>
-%	    | *:
-%		oCountDecrement
-%	]
+	{[ oCountChoose
+	    | zero:
+		>
+	    | *:
+		oCountDecrement
 %%%%%%%%%%%%%%% END HERE	
-	[ oSymbolStkChooseKind
-	    | syExternal:	% file parameter to program
-		oTypeStkSwap	% structure on top
-		[ oTypeStkChooseKind
-		    | tpFile:
-			oSymbolStkSetKind(syVariable)
-			oTypeStkSwap	% component on top
-			[ oTypeStkChooseTypeReference
-			    | no:	% no type table entry
-				oTypeTblEnter
-			    | *:
-			]
-			oTypeStkEnterComponentReference
+		[ oSymbolStkChooseKind
+	    	    | syExternal:	% file parameter to program
 			oTypeStkSwap	% structure on top
-			[ oTypeStkChooseTypeReference
-			    | no:
-				oTypeTblEnter
-			    | *:
+			[ oTypeStkChooseKind
+		            | tpFile:
+				oSymbolStkSetKind(syVariable)
+				oTypeStkSwap	% component on top
+				[ oTypeStkChooseTypeReference
+			    	    | no:	% no type table entry
+				    oTypeTblEnter
+			    	    | *:
+				]
+				oTypeStkEnterComponentReference
+				oTypeStkSwap	% structure on top
+				[ oTypeStkChooseTypeReference
+			    	    | no:
+				    oTypeTblEnter
+			    	    | *:
+				]
+				oSymbolStkEnterTypeReference
+				% A symbol table entry was created for the file
+				% when its program parameter was accepted.
+				oSymbolTblUpdate
+		    	    | *:
+				#eExternalDeclare	% Ignore this declaration
 			]
-			oSymbolStkEnterTypeReference
-			% A symbol table entry was created for the file
-			% when its program parameter was accepted.
-			oSymbolTblUpdate
-		    | *:
-			#eExternalDeclare	% Ignore this declaration
-		]
-	    | *:		% new variable or redeclaration in this scope
-		oSymbolStkSetKind(syVariable)
-		oTypeStkSwap	% structure on top
-		[ oTypeStkChooseKind
-		    | tpFile:
-			% an internal file
+	    	    | *:		% new variable or redeclaration in this scope
 			oSymbolStkSetKind(syVariable)
-			oTypeStkSwap	% component on top
-			[ oTypeStkChooseTypeReference
-			    | no:	% no type table entry
-				oTypeTblEnter
-			    | *:
-			]
-			oTypeStkEnterComponentReference
 			oTypeStkSwap	% structure on top
-			[ oTypeStkChooseTypeReference
-			    | no:
-				oTypeTblEnter
-			    | *:
+			[ oTypeStkChooseKind
+		    	    | tpFile:
+				% an internal file
+				oSymbolStkSetKind(syVariable)
+				oTypeStkSwap	% component on top
+			    	[ oTypeStkChooseTypeReference
+			    	    | no:	% no type table entry
+				    	oTypeTblEnter
+			    	    | *:
+			    	]
+			    	oTypeStkEnterComponentReference
+			    	oTypeStkSwap	% structure on top
+			    	[ oTypeStkChooseTypeReference
+			    	    | no:
+				        oTypeTblEnter
+			    	    | *:
+			    	]
+			    	oSymbolStkEnterTypeReference
+			    	oValuePush(zero)
+			    	@AllocateVar
+			    	oValuePop
+		            | *:
+				@AllocateVar
 			]
-			oSymbolStkEnterTypeReference
-			oValuePush(zero)
-			@AllocateVar
-			oValuePop
-		    | *:
-			@AllocateVar
-		]
 
-		% Create type table entries for the object as necessary.
-		% Where named types were used in the declaration, a type
-		% reference will be present, otherwise the type reference
-		% fields will be null.
-		[ oTypeStkChooseKind
-		    | tpArray, tpFile:
-			oTypeStkSwap	% component on top
-			[ oTypeStkChooseTypeReference
-			    | no:	% no type table entry
-				oTypeTblEnter
-			    | *:
+			% Create type table entries for the object as necessary.
+			% Where named types were used in the declaration, a type
+			% reference will be present, otherwise the type reference
+			% fields will be null.
+			[ oTypeStkChooseKind
+		    	    | tpArray, tpFile:
+				oTypeStkSwap	% component on top
+				[ oTypeStkChooseTypeReference
+			    	    | no:	% no type table entry
+					oTypeTblEnter
+			    	    | *:
+				]
+				oTypeStkEnterComponentReference
+				oTypeStkSwap	% structure on top
+		    	    | *:
 			]
-			oTypeStkEnterComponentReference
-			oTypeStkSwap	% structure on top
-		    | *:
+			[ oTypeStkChooseTypeReference
+		    	    | no:
+				oTypeTblEnter
+		    	    | *:
+			]
+			oSymbolStkEnterTypeReference
+			oSymbolTblEnter
 		]
-		[ oTypeStkChooseTypeReference
-		    | no:
-			oTypeTblEnter
-		    | *:
-		]
-		oSymbolStkEnterTypeReference
-		oSymbolTblEnter
-	]
-	oSymbolStkPop
-%	oTypeStkSwap }
+		oTypeStkSwap 
+		oSymbolStkPop
+	    ]}
 	oTypeStkPop
 	oTypeStkPop;
 
@@ -1613,6 +1629,36 @@ ProcedurePrologue :
 	]}
 	oTypeStkEnterParameterCount	% In procedure's type entry
 	oCountPop;
+
+% Added new rule to handle classes; this should act similarly to ProcedureDefinition rule, except after the scope is pushed, no need for parameter or trap handling; just use the new operations strip and merge on the scope instead of pop scope operation
+ClassDefinition :
+	sIdentifier  oSymbolStkPushLocalIdentifier	% keep class name
+	oSymbolStkSetKind(syClass) 
+	[ oSymbolStkChooseKind
+	    | syClass:
+	    | syUndefined:
+	    | syExternal:
+		#eExternalDeclare
+	    | *:
+		#eMultiplyDefined
+	]
+
+	%oFixPushForwardBranch
+	oTypeStkPush(tpNull)
+	oTypeTblEnter
+	oSymbolStkEnterTypeReference
+	oSymbolTblEnter
+	oSymbolTblPushScope	
+
+	@Block
+
+	%oFixPopForwardBranch	
+	oSymbolTblUpdate
+	oSymbolStkPop
+	oTypeTblUpdate
+	oTypeStkPop
+	oSymbolTblStripScope
+	oSymbolTblMergeScope;
 
 Statement :
 	[
@@ -2037,10 +2083,12 @@ Operand :
 	    | sLiteral: % change string handling to treat strings as first-class values
 		oSymbolStkPush(syExpression)
 		oTypeStkPush(tpString)
-		oValuePushStringLength
-		oEmitValue
-		oValuePop
+%		oValuePushStringLength
+%		oEmitValue
+%		oValuePop
+		.tLiteralString
 		oEmitString
+
 % remove old string handling
 %		oValuePush(one)	% implicit lower bound of string index type
 %		oValuePushStringLength
@@ -2180,15 +2228,28 @@ TernaryOperator:
 	[
 	    | sSubString:
 		% check the type stack
-		{[ oTypeStkChooseKind
+		[ oTypeStkChooseKind
 		    | tpInteger:
 			oTypeStkPop
 			oSymbolStkPop
+		    | *:
+			#eIntegerExpnReqd
+		]
+		[ oTypeStkChooseKind
+		    | tpInteger:
+			oTypeStkPop
+			oSymbolStkPop
+		    | *:
+			#eIntegerExpnReqd
+		]
+		[ oTypeStkChooseKind
 		    | tpString:
+			.tSubString
 			oTypeStkPop
 			oTypeStkPush(tpString)
-			>
-		]}
+		    | *:
+			#eCharExpnReqd
+		]
 	    | *:
 	];
 %	[
@@ -2380,7 +2441,7 @@ ConstantOperand :
 	    | tpBoolean:
 		.tLiteralBoolean
 	    | tpPackedArray:	% always a named literal string
-		.tStringDescriptor
+%		.tStringDescriptor % removed, not required for JT
 	]
 	oValuePushSymbol
 	oEmitValue
@@ -3420,6 +3481,5 @@ FlushActuals :
 	    | *:
 		?
 	]};
-
 
 end

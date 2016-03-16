@@ -1,5 +1,0 @@
-program Hello (output)
-{
-	function sayhi () {
-	}
-}

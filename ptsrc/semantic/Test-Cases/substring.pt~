@@ -1,4 +1,0 @@
-program Hello (output)
-{
-	let s = "s";
-}

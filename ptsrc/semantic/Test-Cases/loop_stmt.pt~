@@ -1,7 +1,0 @@
-program Hello (output)
-{
-	loop {
-		break when (a == 1);
-		var a : integer;
-	}
-}

@@ -1,0 +1,585 @@
+68,141c68,143
+< 	oSymbolTblLookupExternal = 18; { >>14 }
+< 	oSymbolStkPush = 19; { (17) }
+< 	oSymbolStkPushIdentifier = 20;
+< 	oSymbolStkPushLocalIdentifier = 21;
+< 	oSymbolStkPushStandardVariable = 22; { (19) }
+< 	oSymbolStkPushFormalParameter = 23;
+< 	oSymbolStkSetKind = 24; { (17) }
+< 	oSymbolStkLinkToStandardType = 25; { (16) }
+< 	oSymbolStkEnterValue = 26;
+< 	oSymbolStkEnterStringValue = 27;
+< 	oSymbolStkEnterCodeAddress = 28;
+< 	oSymbolStkEnterDataAddress = 29;
+< 	oSymbolStkEnterTypeReference = 30;
+< 	oSymbolStkChooseKind = 31; { >>17 }
+< 	oSymbolStkChooseStandardFile = 32; { >>19 }
+< 	oSymbolStkChooseStandardRoutine = 33; { >>18 }
+< 	oSymbolStkPop = 34;
+< 	oTypeTblEnter = 35;
+< 	oTypeTblUpdate = 36;
+< 	oTypeStkPush = 37; { (20) }
+< 	oTypeStkPushSymbol = 38;
+< 	oTypeStkPushComponent = 39;
+< 	oTypeStkSetKind = 40; { (20) }
+< 	oTypeStkSetRecursionFlag = 41; { (14) }
+< 	oTypeStkChooseRecursionFlag = 42; { >>14 }
+< 	oTypeStkSetPackedComponentFlag = 43; { (14) }
+< 	oTypeStkChoosePackedComponentFlag = 44; { >>14 }
+< 	oTypeStkLinkToStandardComponentType = 45; { (16) }
+< 	oTypeStkEnterBounds = 46;
+< 	oTypeStkVerifyBounds = 47; { >>14 }
+< 	oTypeStkEnterParameterCount = 48;
+< 	oTypeStkCompareParameterCount = 49; { >>14 }
+< 	oTypeStkEnterComponentReference = 50;
+< 	oTypeStkChooseKind = 51; { >>20 }
+< 	oTypeStkChooseTypeReference = 52; { >>14 }
+< 	oTypeStkCompareNames = 53; { >>14 }
+< 	oTypeStkSwap = 54;
+< 	oTypeStkPop = 55;
+< 	oEmitNullAddress = 56;
+< 	oEmitValue = 57;
+< 	oEmitString = 58;
+< 	oEmitDataAddress = 59;
+< 	oEmitTrapKind = 60; { (21) }
+< 	oEmitCaseBranchTable = 61;
+< 	oAllocateAlignOnWord = 62;
+< 	oAllocateVariable = 63;
+< 	oAllocateVarParameter = 64;
+< 	oAllocateDescriptor = 65;
+< 	oValuePush = 66; { (13) }
+< 	oValuePushInteger = 67;
+< 	oValuePushStringLength = 68;
+< 	oValuePushSymbol = 69;
+< 	oValuePushCount = 70;
+< 	oValuePushTypeStkLowerBound = 71;
+< 	oValuePushTypeStkUpperBound = 72;
+< 	oValueNegate = 73;
+< 	oValueChoose = 74; { >>13 }
+< 	oValuePop = 75;
+< 	oCasePushDisplay = 76;
+< 	oCasePopDisplay = 77;
+< 	oCaseLookupLabel = 78; { >>14 }
+< 	oCasePushLabel = 79;
+< 	oCountPush = 80; { (13) }
+< 	oCountPushValue = 81;
+< 	oCountPop = 82;
+< 	oCountIncrement = 83;
+< 	oCountDecrement = 84;
+< 	oCountChoose = 85; { >>13 }
+< 	oFixPushForwardBranch = 86;
+< 	oFixPopForwardBranch = 87;
+< 	oFixPushTargetAddress = 88;
+< 	oFixPopTargetAddress = 89;
+< 	oFixPopAndEnterValue = 90;
+< 	oFixSwap = 91;
+---
+> 	oSymbolTblStripScope = 18;
+> 	oSymbolTblMergeScope = 19;
+> 	oSymbolTblLookupExternal = 20; { >>14 }
+> 	oSymbolStkPush = 21; { (17) }
+> 	oSymbolStkPushIdentifier = 22;
+> 	oSymbolStkPushLocalIdentifier = 23;
+> 	oSymbolStkPushStandardVariable = 24; { (19) }
+> 	oSymbolStkPushFormalParameter = 25;
+> 	oSymbolStkSetKind = 26; { (17) }
+> 	oSymbolStkLinkToStandardType = 27; { (16) }
+> 	oSymbolStkEnterValue = 28;
+> 	oSymbolStkEnterStringValue = 29;
+> 	oSymbolStkEnterCodeAddress = 30;
+> 	oSymbolStkEnterDataAddress = 31;
+> 	oSymbolStkEnterTypeReference = 32;
+> 	oSymbolStkChooseKind = 33; { >>17 }
+> 	oSymbolStkChooseStandardFile = 34; { >>19 }
+> 	oSymbolStkChooseStandardRoutine = 35; { >>18 }
+> 	oSymbolStkPop = 36;
+> 	oTypeTblEnter = 37;
+> 	oTypeTblUpdate = 38;
+> 	oTypeStkPush = 39; { (20) }
+> 	oTypeStkPushSymbol = 40;
+> 	oTypeStkPushComponent = 41;
+> 	oTypeStkSetKind = 42; { (20) }
+> 	oTypeStkSetRecursionFlag = 43; { (14) }
+> 	oTypeStkChooseRecursionFlag = 44; { >>14 }
+> 	oTypeStkSetPackedComponentFlag = 45; { (14) }
+> 	oTypeStkChoosePackedComponentFlag = 46; { >>14 }
+> 	oTypeStkLinkToStandardComponentType = 47; { (16) }
+> 	oTypeStkEnterBounds = 48;
+> 	oTypeStkVerifyBounds = 49; { >>14 }
+> 	oTypeStkEnterParameterCount = 50;
+> 	oTypeStkCompareParameterCount = 51; { >>14 }
+> 	oTypeStkEnterComponentReference = 52;
+> 	oTypeStkChooseKind = 53; { >>20 }
+> 	oTypeStkChooseTypeReference = 54; { >>14 }
+> 	oTypeStkCompareNames = 55; { >>14 }
+> 	oTypeStkSwap = 56;
+> 	oTypeStkPop = 57;
+> 	oEmitNullAddress = 58;
+> 	oEmitValue = 59;
+> 	oEmitString = 60;
+> 	oEmitDataAddress = 61;
+> 	oEmitTrapKind = 62; { (21) }
+> 	oEmitCaseBranchTable = 63;
+> 	oAllocateAlignOnWord = 64;
+> 	oAllocateVariable = 65;
+> 	oAllocateVarParameter = 66;
+> 	oAllocateDescriptor = 67;
+> 	oValuePush = 68; { (13) }
+> 	oValuePushInteger = 69;
+> 	oValuePushStringLength = 70;
+> 	oValuePushSymbol = 71;
+> 	oValuePushCount = 72;
+> 	oValuePushTypeStkLowerBound = 73;
+> 	oValuePushTypeStkUpperBound = 74;
+> 	oValueNegate = 75;
+> 	oValueChoose = 76; { >>13 }
+> 	oValuePop = 77;
+> 	oCasePushDisplay = 78;
+> 	oCasePopDisplay = 79;
+> 	oCaseLookupLabel = 80; { >>14 }
+> 	oCasePushLabel = 81;
+> 	oCountPush = 82; { (13) }
+> 	oCountPushValue = 83;
+> 	oCountPop = 84;
+> 	oCountIncrement = 85;
+> 	oCountDecrement = 86;
+> 	oCountChoose = 87; { >>13 }
+> 	oFixPushForwardBranch = 88;
+> 	oFixPopForwardBranch = 89;
+> 	oFixPushTargetAddress = 90;
+> 	oFixPopTargetAddress = 91;
+> 	oFixPopAndEnterValue = 92;
+> 	oFixSwap = 93;
+155,195c157,203
+< 	sBegin = 10;
+< 	sEnd = 11;
+< 	sNegate = 12;
+< 	sArray = 13;
+< 	sPacked = 14;
+< 	sFile = 15;
+< 	sRange = 16;
+< 	sCaseStmt = 17;
+< 	sCaseEnd = 18;
+< 	sLabelEnd = 19;
+< 	sExpnEnd = 20;
+< 	sNullStmt = 21;
+< 	sAssignmentStmt = 22;
+< 	sSubscript = 23;
+< 	sCallStmt = 24;
+< 	sFieldWidth = 25;
+< 	sIfStmt = 26;
+< 	sThen = 27;
+< 	sElse = 28;
+< 	sWhileStmt = 29;
+< 	sRepeatStmt = 30;
+< 	sRepeatEnd = 31;
+< 	sEq = 32;
+< 	sNE = 33;
+< 	sLT = 34;
+< 	sLE = 35;
+< 	sGT = 36;
+< 	sGE = 37;
+< 	sAdd = 38;
+< 	sSubtract = 39;
+< 	sMultiply = 40;
+< 	sDivide = 41;
+< 	sModulus = 42;
+< 	sInfixOr = 43;
+< 	sOr = 44;
+< 	sInfixAnd = 45;
+< 	sAnd = 46;
+< 	sNot = 47;
+< 	sNewLine = 48;
+< 	sEndOfFile = 49;
+< 	lastInputToken = 49;
+---
+> 	sPublic = 10;
+> 	sBegin = 11;
+> 	sEnd = 12;
+> 	sNegate = 13;
+> 	sArray = 14;
+> 	sPacked = 15;
+> 	sFile = 16;
+> 	sRange = 17;
+> 	sCaseStmt = 18;
+> 	sDefault = 19;
+> 	sCaseEnd = 20;
+> 	sLabelEnd = 21;
+> 	sExpnEnd = 22;
+> 	sNullStmt = 23;
+> 	sAssignmentStmt = 24;
+> 	sSubscript = 25;
+> 	sCallStmt = 26;
+> 	sFieldWidth = 27;
+> 	sIfStmt = 28;
+> 	sThen = 29;
+> 	sElse = 30;
+> 	sClass = 31;
+> 	sLoopStmt = 32;
+> 	sLoopBreakWhen = 33;
+> 	sLoopEnd = 34;
+> 	sReturn = 35;
+> 	sEq = 36;
+> 	sNE = 37;
+> 	sLT = 38;
+> 	sLE = 39;
+> 	sGT = 40;
+> 	sGE = 41;
+> 	sAdd = 42;
+> 	sSubtract = 43;
+> 	sMultiply = 44;
+> 	sDivide = 45;
+> 	sModulus = 46;
+> 	sInfixOr = 47;
+> 	sOr = 48;
+> 	sInfixAnd = 49;
+> 	sAnd = 50;
+> 	sNot = 51;
+> 	sSubstring = 52;
+> 	sLength = 53;
+> 	sNewLine = 54;
+> 	sEndOfFile = 55;
+> 	lastInputToken = 55;
+223c231
+< 	tFetchChar = 24;
+---
+> 	tFetchString = 24;
+228c236
+< 	tAssignChar = 29;
+---
+> 	tAssignString = 29;
+232c240
+< 	tStoreParmChar = 33;
+---
+> 	tStoreParmString = 33;
+237c245
+< 	tSubscriptChar = 38;
+---
+> 	tSubscriptString = 38;
+244,275c252,283
+< 	tWhileBegin = 45;
+< 	tRepeatBegin = 46;
+< 	tRepeatControl = 47;
+< 	tCallBegin = 48;
+< 	tParmEnd = 49;
+< 	tProcedureEnd = 50;
+< 	tWriteBegin = 51;
+< 	tReadBegin = 52;
+< 	tTrapBegin = 53;
+< 	tWriteEnd = 54;
+< 	tReadEnd = 55;
+< 	tLiteralAddress = 56;
+< 	firstCompoundOutputToken = 56;
+< 	tLiteralInteger = 57;
+< 	tLiteralChar = 58;
+< 	tLiteralBoolean = 59;
+< 	tLiteralString = 60;
+< 	tStringDescriptor = 61;
+< 	tSkipString = 62;
+< 	tIfThen = 63;
+< 	tIfMerge = 64;
+< 	tCaseSelect = 65;
+< 	tCaseMerge = 66;
+< 	tCaseEnd = 67;
+< 	tWhileTest = 68;
+< 	tWhileEnd = 69;
+< 	tRepeatTest = 70;
+< 	tSkipProc = 71;
+< 	tCallEnd = 72;
+< 	tLineNumber = 73;
+< 	tTrap = 74;
+< 	lastCompoundOutputToken = 74;
+---
+> 	tCallBegin = 45;
+> 	tParmEnd = 46;
+> 	tProcedureEnd = 47;
+> 	tWriteBegin = 48;
+> 	tReadBegin = 49;
+> 	tTrapBegin = 50;
+> 	tWriteEnd = 51;
+> 	tReadEnd = 52;
+> 	tLiteralAddress = 53;
+> 	firstCompoundOutputToken = 53;
+> 	tLiteralInteger = 54;
+> 	tLiteralBoolean = 55;
+> 	tLiteralString = 56;
+> 	tIfThen = 57;
+> 	tIfMerge = 58;
+> 	tCaseSelect = 59;
+> 	tCaseMerge = 60;
+> 	tCaseEnd = 61;
+> 	tCaseElse = 62;
+> 	tLoopBegin = 63;
+> 	tLoopBreakWhen = 64;
+> 	tLoopTest = 65;
+> 	tLoopEnd = 66;
+> 	tSkipProc = 67;
+> 	tCallEnd = 68;
+> 	tLineNumber = 69;
+> 	tTrap = 70;
+> 	lastCompoundOutputToken = 70;
+> 	tConcatenate = 71;
+> 	tSubstring = 72;
+> 	tLength = 73;
+> 	tStringEqual = 74;
+331a340
+> 	stringSize = 1024;
+339c348
+< 	pidChar = 2;
+---
+> 	pidString = 2;
+363c372
+< 	stdChar = 1;
+---
+> 	stdString = 1;
+375a385,386
+> 	syClass = 9;
+> 	syPublicProcedure = 10;
+395c406
+< 	tpChar = 1;
+---
+> 	tpString = 1;
+410d420
+< 	trWriteString = 7;
+412c422
+< 	trWriteChar = 9;
+---
+> 	trWriteString = 108;
+414c424
+< 	trReadChar = 11;
+---
+> 	trReadString = 107;
+421,483c431,494
+< 	AllocateVar = 878;
+< 	ProcedureDefinition = 956;
+< 	ConstantDefinitions = 137;
+< 	TypeDefinitions = 305;
+< 	VariableDeclarations = 722;
+< 	BeginStmt = 1311;
+< 	ConstantValue = 151;
+< 	SymbolStkPushIntegerConstant = 4122;
+< 	SymbolStkPushCharConstant = 4134;
+< 	TypeBody = 378;
+< 	IndexType = 455;
+< 	ComponentType = 501;
+< 	SimpleType = 550;
+< 	ValuePushValuePlusOne = 4113;
+< 	SymbolStkPushIntegerType = 4146;
+< 	SubrangeUpperBound = 660;
+< 	VariableAttributes = 736;
+< 	ProcedureHeading = 1009;
+< 	ProcedureParameterType = 1055;
+< 	ProcedurePrologue = 1126;
+< 	CountCopy = 4118;
+< 	Statement = 1195;
+< 	AssignmentStmt = 1249;
+< 	CallStmt = 1325;
+< 	IfStmt = 1588;
+< 	WhileStmt = 1619;
+< 	CaseStmt = 1660;
+< 	RepeatStmt = 1636;
+< 	Variable = 2306;
+< 	Expression = 1810;
+< 	CompareAndSwapTypes = 2145;
+< 	OpenProcedure = 2726;
+< 	AssignProcedure = 2795;
+< 	WriteProcedure = 2959;
+< 	WritelnProcedure = 3497;
+< 	ReadProcedure = 3609;
+< 	ReadlnProcedure = 3971;
+< 	ActualParameters = 1458;
+< 	FlushActuals = 4186;
+< 	VariableActual = 1526;
+< 	BooleanControlExpression = 4098;
+< 	CaseSelectorExpression = 4081;
+< 	CaseAlternative = 1706;
+< 	Operand = 1838;
+< 	UnaryOperator = 1975;
+< 	BinaryOperator = 2004;
+< 	FlushExpn = 4165;
+< 	ConstantOperand = 2440;
+< 	VariableOperand = 2476;
+< 	FunctionOperand = 2503;
+< 	SymbolStkPushIntegerVariable = 4153;
+< 	FileOperand = 2701;
+< 	CompareOperandAndResultTypes = 2245;
+< 	CompareRelationalOperandTypes = 2256;
+< 	VariableExtension = 2348;
+< 	StandardFunctionActual = 2606;
+< 	WriteChar = 3289;
+< 	WriteNonChar = 3413;
+< 	WriteStandardExpnList = 3222;
+< 	ReadCharParameterList = 3739;
+< 	ReadNonCharParameterList = 3805;
+< 	ReadChar = 3871;
+< 	ReadNonChar = 3900;
+---
+> 	AllocateVar = 864;
+> 	ProcedureDefinition = 942;
+> 	ClassDefinition = 1191;
+> 	ConstantDefinitions = 143;
+> 	TypeDefinitions = 300;
+> 	VariableDeclarations = 708;
+> 	BeginStmt = 1343;
+> 	ConstantValue = 148;
+> 	SymbolStkPushIntegerConstant = 4184;
+> 	SymbolStkPushCharConstant = 4196;
+> 	TypeBody = 364;
+> 	IndexType = 441;
+> 	ComponentType = 487;
+> 	SimpleType = 536;
+> 	ValuePushValuePlusOne = 4175;
+> 	SymbolStkPushIntegerType = 4208;
+> 	SubrangeUpperBound = 646;
+> 	VariableAttributes = 722;
+> 	ProcedureHeading = 1005;
+> 	ProcedureParameterType = 1051;
+> 	ProcedurePrologue = 1122;
+> 	CountCopy = 4180;
+> 	Statement = 1233;
+> 	AssignmentStmt = 1281;
+> 	CallStmt = 1357;
+> 	IfStmt = 1622;
+> 	CaseStmt = 1678;
+> 	LoopStmt = 1653;
+> 	Variable = 2368;
+> 	Expression = 1840;
+> 	CompareAndSwapTypes = 2207;
+> 	OpenProcedure = 2788;
+> 	AssignProcedure = 2857;
+> 	WriteProcedure = 3021;
+> 	WritelnProcedure = 3559;
+> 	ReadProcedure = 3671;
+> 	ReadlnProcedure = 4033;
+> 	ActualParameters = 1492;
+> 	FlushActuals = 4248;
+> 	VariableActual = 1560;
+> 	BooleanControlExpression = 4160;
+> 	CaseSelectorExpression = 4143;
+> 	CaseAlternative = 1736;
+> 	Operand = 1870;
+> 	UnaryOperator = 1957;
+> 	BinaryOperator = 2005;
+> 	TernaryOperator = 2159;
+> 	FlushExpn = 4227;
+> 	ConstantOperand = 2502;
+> 	VariableOperand = 2538;
+> 	FunctionOperand = 2565;
+> 	SymbolStkPushIntegerVariable = 4215;
+> 	FileOperand = 2763;
+> 	CompareOperandAndResultTypes = 2307;
+> 	CompareRelationalOperandTypes = 2318;
+> 	VariableExtension = 2410;
+> 	StandardFunctionActual = 2668;
+> 	WriteChar = 3351;
+> 	WriteNonChar = 3475;
+> 	WriteStandardExpnList = 3284;
+> 	ReadCharParameterList = 3801;
+> 	ReadNonCharParameterList = 3867;
+> 	ReadChar = 3933;
+> 	ReadNonChar = 3962;
+487c498
+< 	sslTblSize = 4205;
+---
+> 	sslTblSize = 4267;
+491c502
+< { ===== End of contents of semantic.def }
+---
+> { -------- end of semantic.def file -------------- }
+809c820
+< 	standardCharTypeRef :  TypeTblReference;
+---
+> 	standardStringTypeRef :  TypeTblReference;
+928,931c939,942
+< 	    symbolTblKind[pidChar] := syType;
+< 	    symbolTblTypeTblLink[pidChar] := pidChar;
+< 	    typeTblKind[pidChar] := tpChar;
+< 	    standardCharTypeRef := pidChar;
+---
+> 	    symbolTblKind[pidString] := syType;
+> 	    symbolTblTypeTblLink[pidString] := pidString;
+> 	    typeTblKind[pidString] := tpString;
+> 	    standardStringTypeRef := pidString;
+943c954
+< 	    typeTblComponentLink[pidText] := standardCharTypeRef;
+---
+> 	    typeTblComponentLink[pidText] := standardStringTypeRef;
+1693c1704
+< 			{ Pop the lexic level stack, remove local entries
+---
+> 			{ Pop the lexic level syProcedurestack, remove local entries
+1733a1745,1782
+> 		     oSymbolTblStripScope:
+> 			{ like the oSymbolTblPopScope but do not pop/decrement the lexical level at the end }
+> 			begin
+> 			    Assert((lexicLevelStackTop >= 1), assert31);
+> 			    i := symbolTblTop;
+> 			    symbolTblTop := symbolTblDisplay[lexicLevelStackTop];
+> 			{ set symbol table reference for each symbol's identifier entry to the one in the enclosing scope/lower lexical level (symbolTblIdentLink values) if there is one so that visibility is removed }
+> 		
+> 			while i > symbolTblTop do
+> 				begin
+> 				    if symbolTblKind[i] <> syPublicProcedure then
+> 					begin
+> 				            link := symbolTblIdentLink[i];
+> 
+>                				    if link <> null then
+> 		      			    { This is not a dummy identifier
+> 					    generated by the parser's syntax
+> 					    error recovery procedure.	  }
+> 					        begin
+> 					            while link > 0 do
+> 						        link := symbolTblIdentLink[link];
+> 					    	    identSymbolTblRef[-link] :=
+> 							symbolTblIdentLink[i];
+> 					        end;
+> 				        end;
+> 
+> 				    i := i - 1
+> 				end;
+> 			{ classes do not have parameters so no need to preserve parameter entries? }
+> 			   end; 
+> 
+> 		    oSymbolTblMergeScope: 
+> 			{ simply decrement the lexical level without changing links } 
+> 			begin
+> 			    Assert((lexicLevelStackTop >= 1), assert31);
+>                             lexicLevelStackTop := lexicLevelStackTop - 1;    
+> 		        end;
+> 
+1858c1907
+< 				syProcedure), assert24);
+---
+> 				syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure), assert24);
+1874c1923
+< 			    stdChar:
+---
+> 			    stdString:
+1876c1925
+< 					standardCharTypeRef;
+---
+> 					standardStringTypeRef;
+1937c1986
+< 				   (symbolStkKind[symbolStkTop] = syFunction),
+---
+> 				   (symbolStkKind[symbolStkTop] = syFunction) or (symbolStkKind[symbolStkTop] = syPublicProcedure),
+2048c2097
+< 				stdChar:
+---
+> 				stdString:
+2050c2099
+< 					standardCharTypeRef;
+---
+> 					standardStringTypeRef;
+2081c2130
+< 			    Assert((symbolStkKind[symbolStkTop] = syProcedure),
+---
+> 			    Assert((symbolStkKind[symbolStkTop] = syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure),
+2091c2140
+< 			    Assert((symbolStkKind[symbolStkTop] = syProcedure),
+---
+> 			    Assert((symbolStkKind[symbolStkTop] = syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure),
+2373c2422
+< 			    tpChar, tpBoolean:
+---
+> 			    tpString, tpBoolean:

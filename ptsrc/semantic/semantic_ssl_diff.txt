@@ -1,0 +1,909 @@
+29a30,32
+> %%%%%%%%%%% ADDED 
+> 	sPublic
+> %%%%%%%%%6 == "the"%% 
+37a41,43
+> %%%%%%%%%%% ADDED 
+> 	sDefault
+> %%%%%%%%%%% 
+46a53,54
+> 	%sElsif % This has been commented out due to that we are using the parser solution from Phase 2
+> 		% Which has a different way to implement else if.
+49,51c57,66
+< 	sWhileStmt
+< 	sRepeatStmt
+< 	sRepeatEnd
+---
+> 	% sWhileStmt % removal of old token
+> 	% sRepeatStmt % removal of old token
+> 	% sRepeatEnd % removal of old token
+> %%%%%%%%%%% 
+> 	sClass
+> 	sLoopStmt
+> 	sLoopBreakWhen
+> 	sLoopEnd
+> 	sReturn % added here to sync with answer from phase 2
+> %%%%%%%%%%% 
+67a83,86
+> %%%%%%%%%%% 
+> 	sSubstring
+> 	sLength
+> %%%%%%%%%%% 
+98c117
+< 	tFetchChar
+---
+> 	tFetchString % changed from tFetchChar
+103c122
+< 	tAssignChar
+---
+> 	tAssignString % changed from tAssignChar
+107c126
+< 	tStoreParmChar
+---
+> 	tStoreParmString % changed from tStoreParmChar
+112c131
+< 	tSubscriptChar
+---
+> 	tSubscriptString % changed from tSubscriptChar
+119,121c138,140
+< 	tWhileBegin
+< 	tRepeatBegin
+< 	tRepeatControl
+---
+> 	% tWhileBegin removed old while T-code
+> 	% tRepeatBegin removed old repeat T-code
+> 	% tRepeatControl removed old repeat T-code
+135c154
+< 	tLiteralChar
+---
+> 	% removed tLiteralChar token
+138,139c157,158
+< 	tStringDescriptor
+< 	tSkipString
+---
+> 	% tStringDescriptor % removed token, not required for JT
+> 	% tSkipString % removed token, not required for JT
+145,147c164,174
+< 	tWhileTest
+< 	tWhileEnd
+< 	tRepeatTest
+---
+> 	tCaseElse % added new case alternative T-code
+> 
+> 	% added four new loop operation T-codes
+> 	tLoopBegin
+> 	tLoopBreakWhen
+> 	tLoopTest
+> 	tLoopEnd
+> 
+> 	% tWhileTest removed old while T-code
+> 	% tWhileEnd removed old while T-code
+> 	% tRepeatTest removed old repeat T-code 
+153a181,186
+> 	% added new T-code tokens to handle JT strings
+> 	tConcatenate
+> 	tSubstring
+> 	tLength
+> 	tStringEqual
+> 
+159a193
+> 
+209c243,244
+< 	wordSize = 4;
+---
+> 	wordSize = 4
+> 	stringSize = 1024;
+226c261
+< 	pidChar
+---
+> 	pidString
+254c289
+< 	stdChar
+---
+> 	stdString
+288a324,330
+>     oSymbolTblStripScope % new semantic operation
+> 	% For all non-public procedures, hide them away when they're done
+> 	% by strip one scope level away from them.
+> 
+>     oSymbolTblMergeScope % new semantic operation
+> 	% Reduce the lexical level of a entry in Symbol Table
+> 
+309c351,353
+< 	syUndefined;
+---
+> 	syUndefined
+> 	syClass	% new
+> 	syPublicProcedure; % new
+439c483
+< 	tpChar
+---
+> 	tpString % changed from tpChar to tpString
+552d595
+< 	trWriteString = 7
+554c597
+< 	trWriteChar = 9
+---
+> 	trWriteString = 108
+556c599
+< 	trReadChar = 11
+---
+> 	trReadString = 107
+830a874,875
+> 	    | sClass: % added handling of class definition token which leads to appropriate rule
+> 		@ClassDefinition
+844,849c889,897
+< 	{[
+< 	    | sIdentifier:
+< 		@ConstantValue
+< 	    | *:
+< 		>
+< 	]};
+---
+> %	{[
+> %	    | sIdentifier:
+> %		@ConstantValue
+> %	    | *:
+> %		>
+> %	]};
+> % removed loop
+> 	sIdentifier
+> 	@ConstantValue;
+907,916c955,979
+< 		oValuePush(one)	% implicit lower bound of string index type
+< 		oValuePushStringLength
+< 		[ oValueChoose
+< 		    | zero:
+< 			#eNullString
+< 			@SymbolStkPushCharConstant
+< 		    | one:
+< 			oSymbolStkLinkToStandardType(stdChar)
+< 			oSymbolStkEnterStringValue
+< 		    | *:
+---
+> 		.tAssignBegin
+> 		@Variable
+> 		[ oTypeStkChooseKind
+> 	    	    | tpArray:
+> 			#eScalarReqd
+> 			% No error repair since error is confined to this rule
+> 	    	    | *:
+> 		]
+> 
+> 		%@Expression	% Push symbol and type stack entries for an expression
+> 		%@CompareAndSwapTypes
+> 		.tAssignString
+> 		oTypeStkPop
+> 
+> % removed old string handling
+> %		oValuePush(one)	% implicit lower bound of string index type
+> %		oValuePushStringLength
+> %		[ oValueChoose
+> %		    | zero:
+> %			#eNullString
+> %			@SymbolStkPushCharConstant
+> %		    | one:
+> %			oSymbolStkLinkToStandardType(stdString)
+> %			oSymbolStkEnterStringValue
+> %		    | *:
+919,923c982,986
+< 			.tSkipString
+< 			oFixPushForwardBranch
+< 			oEmitNullAddress
+< 			.tLiteralString
+< 			oEmitValue	% string length
+---
+> % removed no longer needed			.tSkipString
+> %			oFixPushForwardBranch
+> %			oEmitNullAddress
+> %			.tLiteralString
+> %			oEmitValue	% string length
+926,937c989,1000
+< 			oSymbolStkEnterCodeAddress
+< 			oEmitString
+< 			oFixPopForwardBranch
+< 			oTypeStkPush(tpPackedArray)	% means literal string
+< 			oTypeStkEnterBounds
+< 			oTypeStkLinkToStandardComponentType(stdChar)
+< 			oTypeTblEnter
+< 			oSymbolStkEnterTypeReference
+< 			oTypeStkPop
+< 		]
+< 		oValuePop	% Upper bound
+< 		oValuePop	% Lower bound
+---
+> %			oSymbolStkEnterCodeAddress
+> %			oEmitString
+> %			oFixPopForwardBranch
+> %			oTypeStkPush(tpString)	% means literal string
+> %			oTypeStkEnterBounds
+> %			oTypeStkLinkToStandardComponentType(stdString)
+> %			oTypeTblEnter
+> %			oSymbolStkEnterTypeReference
+> %			oTypeStkPop
+> %		]
+> %		oValuePop	% Upper bound
+> %		oValuePop	% Lower bound
+943,944c1006,1009
+< 	{[
+< 	    | sIdentifier:
+---
+> %	{[
+> %	    | sIdentifier:
+> % removed loop
+> 		sIdentifier
+991,994c1056,1060
+< 		oTypeStkPop
+< 	    | *:
+< 		>
+< 	]};
+---
+> 		oTypeStkPop;
+> %	    | *:
+> %		>
+> %	]};
+> % removed loop
+1214,1217c1280,1302
+< 	{[
+< 	    | sIdentifier:
+< 		@VariableAttributes
+< 	    | *:
+---
+> 	oCountPush(zero)
+> 	sIdentifier
+> 	oCountIncrement
+> 	oSymbolStkPushLocalIdentifier
+> 	[oSymbolStkChooseKind
+> 	   | syUndefined, syExternal:
+>            | *:
+>                #eMultiplyDefined
+>                 % The new definition will obscure the old one
+> 	]
+> 
+> 	{[ 
+> 	    | sVar:
+> 		sIdentifier
+> 		oCountIncrement
+> 		oSymbolStkPushLocalIdentifier
+> 		[ oSymbolStkChooseKind
+>           		| syUndefined, syExternal:
+>           		| *:
+>                 		#eMultiplyDefined
+> 				% The new definition will obscure the old one
+> 		]
+> 	    | *:       
+1219c1304,1314
+< 	]};
+---
+> 	]}
+> 	@VariableAttributes
+> 	oCountPop;
+> 
+> %VariableDeclarations :
+> %	{[
+> %	    | sIdentifier:
+> %		@VariableAttributes
+> %	    | *:
+> %		>
+> %	]};
+1222,1226c1317,1321
+< 	oSymbolStkPushLocalIdentifier
+< 	[ oSymbolStkChooseKind
+< 	    | syUndefined, syExternal:
+< 	    | *:
+< 		#eMultiplyDefined
+---
+> %	oSymbolStkPushLocalIdentifier
+> %	[ oSymbolStkChooseKind
+> %	    | syUndefined, syExternal:
+> %	    | *:
+> %		#eMultiplyDefined
+1228c1323
+< 	]
+---
+> %	]
+1232,1244c1327,1335
+< 	[ oSymbolStkChooseKind
+< 	    | syExternal:	% file parameter to program
+< 		oTypeStkSwap	% structure on top
+< 		[ oTypeStkChooseKind
+< 		    | tpFile:
+< 			oSymbolStkSetKind(syVariable)
+< 			oTypeStkSwap	% component on top
+< 			[ oTypeStkChooseTypeReference
+< 			    | no:	% no type table entry
+< 				oTypeTblEnter
+< 			    | *:
+< 			]
+< 			oTypeStkEnterComponentReference
+---
+> %%%%%%%%%%%%%%% ADDED HERE
+> 	{[ oCountChoose
+> 	    | zero:
+> 		>
+> 	    | *:
+> 		oCountDecrement
+> %%%%%%%%%%%%%%% END HERE	
+> 		[ oSymbolStkChooseKind
+> 	    	    | syExternal:	% file parameter to program
+1246,1249c1337,1358
+< 			[ oTypeStkChooseTypeReference
+< 			    | no:
+< 				oTypeTblEnter
+< 			    | *:
+---
+> 			[ oTypeStkChooseKind
+> 		            | tpFile:
+> 				oSymbolStkSetKind(syVariable)
+> 				oTypeStkSwap	% component on top
+> 				[ oTypeStkChooseTypeReference
+> 			    	    | no:	% no type table entry
+> 				    oTypeTblEnter
+> 			    	    | *:
+> 				]
+> 				oTypeStkEnterComponentReference
+> 				oTypeStkSwap	% structure on top
+> 				[ oTypeStkChooseTypeReference
+> 			    	    | no:
+> 				    oTypeTblEnter
+> 			    	    | *:
+> 				]
+> 				oSymbolStkEnterTypeReference
+> 				% A symbol table entry was created for the file
+> 				% when its program parameter was accepted.
+> 				oSymbolTblUpdate
+> 		    	    | *:
+> 				#eExternalDeclare	% Ignore this declaration
+1251,1263c1360
+< 			oSymbolStkEnterTypeReference
+< 			% A symbol table entry was created for the file
+< 			% when its program parameter was accepted.
+< 			oSymbolTblUpdate
+< 		    | *:
+< 			#eExternalDeclare	% Ignore this declaration
+< 		]
+< 	    | *:		% new variable or redeclaration in this scope
+< 		oSymbolStkSetKind(syVariable)
+< 		oTypeStkSwap	% structure on top
+< 		[ oTypeStkChooseKind
+< 		    | tpFile:
+< 			% an internal file
+---
+> 	    	    | *:		% new variable or redeclaration in this scope
+1265,1271d1361
+< 			oTypeStkSwap	% component on top
+< 			[ oTypeStkChooseTypeReference
+< 			    | no:	% no type table entry
+< 				oTypeTblEnter
+< 			    | *:
+< 			]
+< 			oTypeStkEnterComponentReference
+1273,1276c1363,1402
+< 			[ oTypeStkChooseTypeReference
+< 			    | no:
+< 				oTypeTblEnter
+< 			    | *:
+---
+> 			[ oTypeStkChooseKind
+> 		    	    | tpFile:
+> 				% an internal file
+> 				oSymbolStkSetKind(syVariable)
+> 				oTypeStkSwap	% component on top
+> 			    	[ oTypeStkChooseTypeReference
+> 			    	    | no:	% no type table entry
+> 				    	oTypeTblEnter
+> 			    	    | *:
+> 			    	]
+> 			    	oTypeStkEnterComponentReference
+> 			    	oTypeStkSwap	% structure on top
+> 			    	[ oTypeStkChooseTypeReference
+> 			    	    | no:
+> 				        oTypeTblEnter
+> 			    	    | *:
+> 			    	]
+> 			    	oSymbolStkEnterTypeReference
+> 			    	oValuePush(zero)
+> 			    	@AllocateVar
+> 			    	oValuePop
+> 		            | *:
+> 				@AllocateVar
+> 			]
+> 
+> 			% Create type table entries for the object as necessary.
+> 			% Where named types were used in the declaration, a type
+> 			% reference will be present, otherwise the type reference
+> 			% fields will be null.
+> 			[ oTypeStkChooseKind
+> 		    	    | tpArray, tpFile:
+> 				oTypeStkSwap	% component on top
+> 				[ oTypeStkChooseTypeReference
+> 			    	    | no:	% no type table entry
+> 					oTypeTblEnter
+> 			    	    | *:
+> 				]
+> 				oTypeStkEnterComponentReference
+> 				oTypeStkSwap	% structure on top
+> 		    	    | *:
+1278,1292d1403
+< 			oSymbolStkEnterTypeReference
+< 			oValuePush(zero)
+< 			@AllocateVar
+< 			oValuePop
+< 		    | *:
+< 			@AllocateVar
+< 		]
+< 
+< 		% Create type table entries for the object as necessary.
+< 		% Where named types were used in the declaration, a type
+< 		% reference will be present, otherwise the type reference
+< 		% fields will be null.
+< 		[ oTypeStkChooseKind
+< 		    | tpArray, tpFile:
+< 			oTypeStkSwap	% component on top
+1294c1405
+< 			    | no:	% no type table entry
+---
+> 		    	    | no:
+1296c1407
+< 			    | *:
+---
+> 		    	    | *:
+1298,1305c1409,1410
+< 			oTypeStkEnterComponentReference
+< 			oTypeStkSwap	% structure on top
+< 		    | *:
+< 		]
+< 		[ oTypeStkChooseTypeReference
+< 		    | no:
+< 			oTypeTblEnter
+< 		    | *:
+---
+> 			oSymbolStkEnterTypeReference
+> 			oSymbolTblEnter
+1307,1310c1412,1414
+< 		oSymbolStkEnterTypeReference
+< 		oSymbolTblEnter
+< 	]
+< 	oSymbolStkPop
+---
+> 		oTypeStkSwap 
+> 		oSymbolStkPop
+> 	    ]}
+1332c1436
+< 		    | tpChar, tpBoolean:
+---
+> 		    | tpString, tpBoolean:
+1381a1486,1492
+> 	[ % recognize public procedures
+> 	    | sPublic:
+> 		% store public procedures with attribute syPublicProcedure
+> 		oSymbolStkSetKind(syPublicProcedure) 
+> 	    | *:
+> 		oSymbolStkSetKind(syProcedure)	
+> 	]
+1385c1496
+< 	oSymbolStkSetKind(syProcedure)
+---
+> % remove, this is handled above	oSymbolStkSetKind(syProcedure)
+1506,1507c1617,1618
+< 			    | tpChar:
+< 				.tStoreParmChar
+---
+> 			    | tpString:
+> 				.tStoreParmString
+1521a1633,1662
+> % Added new rule to handle classes; this should act similarly to ProcedureDefinition rule, except after the scope is pushed, no need for parameter or trap handling; just use the new operations strip and merge on the scope instead of pop scope operation
+> ClassDefinition :
+> 	sIdentifier  oSymbolStkPushLocalIdentifier	% keep class name
+> 	oSymbolStkSetKind(syClass) 
+> 	[ oSymbolStkChooseKind
+> 	    | syClass:
+> 	    | syUndefined:
+> 	    | syExternal:
+> 		#eExternalDeclare
+> 	    | *:
+> 		#eMultiplyDefined
+> 	]
+> 
+> 	%oFixPushForwardBranch
+> 	oTypeStkPush(tpNull)
+> 	oTypeTblEnter
+> 	oSymbolStkEnterTypeReference
+> 	oSymbolTblEnter
+> 	oSymbolTblPushScope	
+> 
+> 	@Block
+> 
+> 	%oFixPopForwardBranch	
+> 	oSymbolTblUpdate
+> 	oSymbolStkPop
+> 	oTypeTblUpdate
+> 	oTypeStkPop
+> 	oSymbolTblStripScope
+> 	oSymbolTblMergeScope;
+> 
+1532,1534c1673,1675
+< 	    | sWhileStmt:
+< 		@WhileStmt
+< 	    | sCaseStmt:
+---
+> 	    % | sWhileStmt:
+> 		% @WhileStmt
+> 	    | sCaseStmt: % switch statement handling
+1536,1537c1677,1680
+< 	    | sRepeatStmt:
+< 		@RepeatStmt
+---
+> 	    % | sRepeatStmt:
+> 		% @RepeatStmt
+> 	    | sLoopStmt:
+> 		@LoopStmt
+1566,1567c1709,1710
+< 	    | tpChar:
+< 		.tAssignChar
+---
+> 	    | tpString:
+> 		.tAssignString
+1591c1734
+< 	    | syProcedure:
+---
+> 	    | syProcedure, syPublicProcedure:
+1703c1846
+< 		    | tpInteger, tpSubrange, tpChar, tpBoolean:
+---
+> 		    | tpInteger, tpSubrange, tpString, tpBoolean:
+1748,1750c1891,1925
+< WhileStmt :
+< 	.tWhileBegin
+< 	oFixPushTargetAddress		% top-of-loop branch target
+---
+> % removed while and repeat statement rules
+> % WhileStmt :
+> %        .tWhileBegin
+> %        oFixPushTargetAddress           % top-of-loop branch target
+> %        @BooleanControlExpression
+> %        .tWhileTest
+> %        oFixPushForwardBranch
+> %        oEmitNullAddress                % exit branch
+> %        oFixSwap                % top-of-loop target back on top
+> %        @Statement
+> %        .tWhileEnd
+> %        oFixPopTargetAddress
+> %        oFixPopForwardBranch;
+> %
+> %RepeatStmt :
+> %        .tRepeatBegin
+> %        oFixPushTargetAddress           % top-of-loop branch target
+> %	{[
+> %            | sRepeatEnd:assert52
+> %                >
+> %            | *:
+> %                @Statement
+> %        ]}
+> %        .tRepeatControl
+> %        @BooleanControlExpression
+> %        .tRepeatTest
+> %        oFixPopTargetAddress;
+> 
+> % added loop statement rule
+> LoopStmt :
+> 	.tLoopBegin
+> 	@Statement % allow statement before condition
+> 	sLoopBreakWhen
+> 	.tLoopBreakWhen
+> 	oFixPushTargetAddress           % top-of-loop branch target
+1752c1927
+< 	.tWhileTest
+---
+> 	.tLoopTest
+1754,1755c1929,1930
+< 	oEmitNullAddress		% exit branch
+< 	oFixSwap		% top-of-loop target back on top
+---
+> 	oEmitNullAddress                % exit branch
+> 	oFixSwap                % top-of-loop target back on top
+1757c1932,1933
+< 	.tWhileEnd
+---
+> 	sLoopEnd
+> 	.tLoopEnd
+1761,1774d1936
+< RepeatStmt :
+< 	.tRepeatBegin
+< 	oFixPushTargetAddress		% top-of-loop branch target
+< 	{[
+< 	    | sRepeatEnd:
+< 		>
+< 	    | *:
+< 		@Statement
+< 	]}
+< 	.tRepeatControl
+< 	@BooleanControlExpression
+< 	.tRepeatTest
+< 	oFixPopTargetAddress;
+< 
+1785a1948,1954
+> 	    | sDefault:
+> 		@Statement
+> 		.tCaseMerge
+> 		oFixPushForwardBranch
+> 		oEmitNullAddress		% merge branch at end of statement
+> 		oFixSwap			% keep case select branch on top
+> 		oCountIncrement
+1872a2042
+> 	    @TernaryOperator
+1913,1939c2083,2117
+< 	    | sLiteral:
+< 		oValuePush(one)	% implicit lower bound of string index type
+< 		oValuePushStringLength
+< 		[ oValueChoose
+< 		    | zero:
+< 			#eNullString
+< 			oSymbolStkPush(syExpression)
+< 			oTypeStkPush(tpChar)
+< 		    | one:
+< 			oSymbolStkPush(syExpression)
+< 			oTypeStkPush(tpChar)
+< 			.tLiteralChar
+< 			oEmitString
+< 		    | *:
+< 			oSymbolStkPush(syExpression)
+< 			% branch around string since
+< 			% it is stored in the code area
+< 			.tSkipString
+< 			oFixPushForwardBranch
+< 			oEmitNullAddress
+< 			.tLiteralString
+< 			oEmitValue	% string length
+< 			oFixPushTargetAddress
+< 			oFixSwap		% Forward branch back on top
+< 			oEmitString
+< 			oFixPopForwardBranch
+< 			% Descriptor points to the
+---
+> 	    | sLiteral: % change string handling to treat strings as first-class values
+> 		oSymbolStkPush(syExpression)
+> 		oTypeStkPush(tpString)
+> %		oValuePushStringLength
+> %		oEmitValue
+> %		oValuePop
+> 		.tLiteralString
+> 		oEmitString
+> 
+> % remove old string handling
+> %		oValuePush(one)	% implicit lower bound of string index type
+> %		oValuePushStringLength
+> %		[ oValueChoose
+> %		    | zero:
+> %			#eNullString
+> %			oSymbolStkPush(syExpression)
+> %			oTypeStkPush(tpString)
+> %		    | one:
+> %			oSymbolStkPush(syExpression)
+> %			oTypeStkPush(tpString)
+> %			.tLiteralString
+> %			oEmitString
+> %		    | *:
+> %			% branch around string since
+> %			% it is stored in the code area
+> %			.tSkipString
+> %			oFixPushForwardBranch
+> %			oEmitNullAddress
+> %			.tLiteralString
+> %			oEmitValue	% string length
+> %			oFixPushTargetAddress
+> %			oFixSwap		% Forward branch back on top
+> %			oEmitString
+> %			oFixPopForwardBranch
+> %			% Descriptor points to the
+1941,1948c2119,2126
+< 			.tStringDescriptor
+< 			oFixPopTargetAddress
+< 			oTypeStkPush(tpPackedArray)
+< 			oTypeStkEnterBounds
+< 			oTypeStkLinkToStandardComponentType(stdChar)
+< 		]
+< 		oValuePop
+< 		oValuePop
+---
+> %			.tStringDescriptor
+> %			oFixPopTargetAddress
+> %			oTypeStkPush(tpPackedArray)
+> %			oTypeStkEnterBounds
+> %			oTypeStkLinkToStandardComponentType(stdString)
+> %		]
+> %		oValuePop
+> %		oValuePop
+1956a2135,2144
+> %%%%%%%%%%%% ADDED Line Here
+> 	    | sLength:
+> 		[ oTypeStkChooseKind
+> 		    | tpString:
+> 			.tLength
+> 			oTypeStkPush(tpInteger)
+> 		    | *:
+> 			#eTypeMismatch
+> 		]
+> %%%%%%%%%%%% END Here
+1977,1978c2165,2172
+< 		.tAdd
+< 		oTypeStkPush(tpInteger)	% result type
+---
+> 		[ oTypeStkChooseKind
+> 			    | tpString:
+> 				.tConcatenate
+> 				oTypeStkPush(tpString)
+> 			    | *:
+> 				.tAdd
+> 				oTypeStkPush(tpInteger)	% result type
+> 		]
+1979a2174,2176
+> 		%.tAdd
+> 		%oTypeStkPush(tpInteger)	% result type
+> 		%@CompareOperandAndResultTypes
+2028a2226,2262
+> TernaryOperator:
+> 	% This is added part for ternary operator.
+> 	[
+> 	    | sSubString:
+> 		% check the type stack
+> 		[ oTypeStkChooseKind
+> 		    | tpInteger:
+> 			oTypeStkPop
+> 			oSymbolStkPop
+> 		    | *:
+> 			#eIntegerExpnReqd
+> 		]
+> 		[ oTypeStkChooseKind
+> 		    | tpInteger:
+> 			oTypeStkPop
+> 			oSymbolStkPop
+> 		    | *:
+> 			#eIntegerExpnReqd
+> 		]
+> 		[ oTypeStkChooseKind
+> 		    | tpString:
+> 			.tSubString
+> 			oTypeStkPop
+> 			oTypeStkPush(tpString)
+> 		    | *:
+> 			#eCharExpnReqd
+> 		]
+> 	    | *:
+> 	];
+> %	[
+> %	    | sSubString:
+> %		.tSubString
+> %		oTypeStkPush(tpString) % again here I used PackedArray instead of String
+> %		%@CompareOperandAndResultTypes
+> %	    | *:
+> %	];
+> 
+2043c2277
+< 	    | tpChar:
+---
+> 	    | tpString:
+2046c2280
+< 		    | tpChar:
+---
+> 		    | tpString:
+2107c2341
+< 	    | tpChar:
+---
+> 	    | tpString:
+2110c2344
+< 		    | tpChar:
+---
+> 		    | tpString:
+2185,2186c2419,2420
+< 		    | tpChar:
+< 			.tSubscriptChar
+---
+> 		    | tpString:
+> 			.tSubscriptString
+2192c2426
+< 		    | tpInteger, tpSubrange, tpChar, tpBoolean:
+---
+> 		    | tpInteger, tpSubrange, tpString, tpBoolean:
+2199c2433
+< 	% Operand has just accepted an identifier and pushed  a
+---
+> 	% Operand has just accepted an identifiers and pushed  a
+2205,2206c2439,2440
+< 	    | tpChar:
+< 		.tLiteralChar
+---
+> 	    | tpString:
+> 		.tLiteralString
+2210c2444
+< 		.tStringDescriptor
+---
+> %		.tStringDescriptor % removed, not required for JT
+2224,2225c2458,2459
+< 	    | tpChar:
+< 		.tFetchChar
+---
+> 	    | tpString:
+> 		.tFetchString
+2260c2494
+< 		oTypeStkPush(tpChar)
+---
+> 		oTypeStkPush(tpString)
+2266c2500
+< 			    | tpChar:
+---
+> 			    | tpString:
+2452c2686
+< 				.tSubscriptChar
+---
+> 				.tSubscriptString
+2460c2694
+< 				    | tpChar:
+---
+> 				    | tpString:
+2523c2757
+< 				    | tpChar:
+---
+> 				    | tpString:
+2543c2777
+< 						    .tSubscriptChar
+---
+> 						    .tSubscriptString
+2634c2868
+< 				.tSubscriptChar
+---
+> 				.tSubscriptString
+2676c2910
+< 			.tSubscriptChar
+---
+> 			.tSubscriptString
+2710c2944
+< 		    | tpChar:
+---
+> 		    | tpString:
+2723c2957
+< 	    | tpChar:
+---
+> 	    | tpString:
+2725c2959
+< 		oEmitTrapKind(trWriteChar)
+---
+> 		oEmitTrapKind(trWriteString)
+2729c2963
+< 	    | tpArray, tpPackedArray:	% must be a char array or literal string
+---
+> 	    | tpArray, tpPackedArray :	% must be a char array or literal string
+2732c2966
+< 		    | tpChar:
+---
+> 		    | tpString:
+2833c3067
+< 				    | tpChar:
+---
+> 				    | tpString:
+2901c3135
+< 				    | tpChar:
+---
+> 				    | tpString:
+3042c3276
+< 	    | tpChar:
+---
+> 	    | tpString:
+3044c3278
+< 		oEmitTrapKind(trReadChar)
+---
+> 		oEmitTrapKind(trReadString)
+3121c3355
+< 				    | tpChar:
+---
+> 				    | tpString:
+3170c3404
+< 	% Boolean control expressions occur in IF, WHILE and REPEAT statements.
+---
+> 	% Boolean control expressions occur in IF and LOOP statements.
+3211c3445
+< 	oSymbolStkLinkToStandardType(stdChar);
+---
+> 	oSymbolStkLinkToStandardType(stdString);
+3250d3483
+< 

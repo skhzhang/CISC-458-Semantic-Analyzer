@@ -1,4 +1,5 @@
 program Hello (output)
 {
-	var a, b, c: integer;
+	var s : integer;
+	s = 5;
 }

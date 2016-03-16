@@ -1,15 +1,23 @@
-c69 82
-	oCasePushLabel = 81;
-	oCountPush = 82; { (13) }
-	oCountPushValue = 83;
-	oCountPop = 84;
-	oCountIncrement = 85;
-	oCountDecrement = 86;
-	oCountChoose = 87; { >>13 }
-	oFixPushForwardBranch = 88;
-	oFixPopForwardBranch = 89;
-	oFixPushTargetAddress = 90;
-	oFixPopTargetAddress = 91;
-	oFixPopAndEnterValue = 92;
-	oFixSwap = 93;
+c203 225
+	tIfThen = 57;
+	tIfMerge = 58;
+	tCaseSelect = 59;
+	tCaseMerge = 60;
+	tCaseEnd = 61;
+	tCaseElse = 62;
+	tLoopBegin = 63;
+	tLoopBreakWhen = 64;
+	tLoopTest = 65;
+	tLoopEnd = 66;
+	tSkipProc = 67;
+	tCallEnd = 68;
+	tLineNumber = 69;
+	tTrap = 70;
+	lastCompoundOutputToken = 70;
+	tConcatenate = 71;
+	tSubstring = 72;
+	tLength = 73;
+	tStringEqual = 74;
+	tEndOfFile = 75;
+	lastOutputToken = 75;
 .
