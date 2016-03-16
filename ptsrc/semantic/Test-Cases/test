@@ -1,0 +1,10 @@
+for file in ./*.pt;
+do
+	result="Result/$file.txt"
+	touch $result
+	echo ---------------------------------This is -i output ------------------------------------------- >> $result
+	ssltrace "ptc -o3 -t3 -L ../../lib/pt $file" ../semantic.def -i >> $result
+	echo ---------------------------------This is -e output ------------------------------------------- >> $result
+	ssltrace "ptc -o3 -t3 -L ../../lib/pt $file" ../semantic.def -e >> $result
+	echo ------------------------------------------------------------------------------------- >> $result
+done

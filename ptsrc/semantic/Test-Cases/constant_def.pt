@@ -1,0 +1,4 @@
+program Hello (output)
+{
+	let a = 12, b = 14;
+}

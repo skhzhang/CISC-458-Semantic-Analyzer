@@ -1,0 +1,9 @@
+program Hello (output)
+{
+	if (3 == 3) {
+	}
+	elsif (4 == 3) {
+	}
+	else {
+	}
+}

@@ -1,0 +1,7 @@
+program Hello (output)
+{
+	let a = "justin";
+
+	var b : string;
+	b = "bieber";
+}

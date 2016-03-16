@@ -1,0 +1,5 @@
+program Hello (output)
+{
+	if (0 @  1 : 2 == "rrrrr") {
+	}
+}

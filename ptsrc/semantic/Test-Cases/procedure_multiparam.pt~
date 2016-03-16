@@ -1,0 +1,5 @@
+program Hello (output)
+{
+	function sayhi (var a : integer, var b : integer) {
+	}
+}
